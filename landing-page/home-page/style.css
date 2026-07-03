@@ -1,0 +1,243 @@
+* {
+    margin: 0;
+    
+}
+body{
+    font-family: "Poppins", sans-serif;
+    background-color: white;
+    animation:aparecer .8s;
+    margin:0;
+    height:100vh;
+    display:flex;
+    flex-direction:column;
+    overflow:hidden;
+
+}
+
+:root {
+    --LightBlue: #B3DEEA;
+    --Cyan: #94b0ff;
+    --Pink: #e834ff;
+    --LightPink: #E2A9F1;
+}
+
+header{
+    background: linear-gradient(135deg,#94b0ff,#e2a9f1);
+    height:90px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:0 70px;
+    box-shadow:0 3px 15px rgba(0,0,0,.15);
+    flex-shrink:0;
+}
+
+.MindUpTitle{
+    font-family:"Lobster Two",cursive;
+    font-size:55px;
+    color:white;
+    text-shadow:2px 2px 8px rgba(0,0,0,.2);
+}
+.navegacao{
+    margin:0;
+}
+.navegacao ul {
+    display: flex;
+    list-style: none;
+    gap: 20px;
+}
+
+.navegacao a{
+
+    text-decoration:none;
+    color:#444;
+
+    background:white;
+
+    padding:10px 25px;
+
+    border-radius:30px;
+
+    font-weight:600;
+
+    border:none;
+
+    transition:.3s;
+
+    box-shadow:0 4px 10px rgba(0,0,0,.15);
+
+}
+
+.Logo{
+    width:90px;
+    height: auto;
+    padding:0;
+}
+/* rodapé começa aqui eu ach */
+/* ===== FOOTER ===== */
+
+.Rodape{
+     height:120px;
+    flex-shrink:0;
+
+    display:flex;
+    justify-content:space-around;
+    align-items:center;
+
+    background:linear-gradient(135deg,#94b0ff,#e2a9f1);
+}
+
+.colunaFooter{
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+}
+
+.colunaFooter h3{
+    font-size:22px;
+    margin-bottom:10px;
+    color:#222;
+}
+
+.colunaFooter a{
+    text-decoration:none;
+    color:#333;
+    transition:.3s;
+}
+
+.colunaFooter a:hover{
+    color:white;
+    transform:translateX(6px);
+}
+
+.Tópicos {
+    display: flex;
+    justify-content: space-around;
+    color: black;
+    font-weight: bolder;
+}
+
+.LinksEmpresa {
+    color: black;
+    margin-left: 9.4%
+}
+
+.LinksAjuda {
+    margin-left: 77.6%;
+}
+
+/* PARTE DO MEIO AQU */
+
+.sectionCentral{
+
+    display:flex;
+
+
+    align-items:center;
+
+    min-height:calc(100vh - 180px);
+    flex:1;
+    justify-content:space-evenly;
+    padding:20px 60px;
+
+}
+.sectionCentral img{
+
+    width:430px;
+
+    animation:flutuar 4s ease-in-out infinite;
+
+}
+.div1 {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.div1 h2{
+
+    font-size:3rem;
+
+    font-weight:600;
+
+    color:#333;
+
+    line-height:1.4;
+
+}
+.botaoExperimente{
+
+    text-decoration:none;
+
+    color:white;
+
+    background:linear-gradient(135deg,#94b0ff,#d96fff);
+
+    padding:15px 35px;
+
+    border-radius:40px;
+
+    font-size:20px;
+
+    font-weight:600;
+
+    transition:.35s;
+
+    box-shadow:0 10px 25px rgba(217,111,255,.35);
+
+}
+/* ANIMAÇÕES DOS BOTÕES */
+
+.navegacao a:hover{
+
+    background:#f6f1ff;
+
+    transform:translateY(-3px);
+
+}
+.botaoExperimente:hover{
+
+    transform:translateY(-5px);
+
+    box-shadow:0 18px 35px rgba(217,111,255,.45);
+
+}
+.botaoExperimente:active {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(171, 201, 255, 0.4);
+}
+@keyframes flutuar{
+
+0%{
+transform:translateY(0);
+}
+
+50%{
+transform:translateY(-12px);
+}
+
+100%{
+transform:translateY(0);
+}
+
+}
+@keyframes aparecer{
+
+from{
+
+opacity:0;
+
+transform:translateY(20px);
+
+}
+
+to{
+
+opacity:1;
+
+transform:translateY(0);
+
+}
+
+}
