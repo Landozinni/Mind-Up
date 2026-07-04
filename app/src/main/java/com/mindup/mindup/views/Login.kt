@@ -71,7 +71,7 @@ import com.mindup.mindup.ui.theme.MindUpFont
             fontFamily = MindUpFont,
             modifier = Modifier.fillMaxWidth().padding(20.dp),
             textAlign = TextAlign.Center,
-            letterSpacing = (4.sp)
+            letterSpacing = (0.sp)
         )
         Text(
             text = buildAnnotatedString {
