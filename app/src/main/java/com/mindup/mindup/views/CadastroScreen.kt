@@ -1,5 +1,4 @@
 package com.mindup.mindup.views
-
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -17,12 +16,12 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Badge
+import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
@@ -39,7 +38,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -47,12 +45,14 @@ import com.mindup.mindup.R
 import com.mindup.mindup.ui.theme.AzulMindUp
 import com.mindup.mindup.ui.theme.MindUpFont
 import com.mindup.mindup.ui.theme.RosaMindUp
-import com.mindup.mindup.ui.theme.RoxoMindUp
 import com.mindup.mindup.ui.theme.White
-
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 @Composable
-fun LoginScreen() {
+fun CadastroScreen() {
 
+    var nome by remember { mutableStateOf("") }
+    var nascimento by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var senha by remember { mutableStateOf("") }
     var mostrarSenha by remember { mutableStateOf(false) }
@@ -73,38 +73,110 @@ fun LoginScreen() {
 
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
+
     ) {
 
-        Spacer(modifier = Modifier.height(40.dp))
+        Spacer(modifier = Modifier.height(35.dp))
 
         Image(
             painter = painterResource(R.drawable.mindup_logo),
             contentDescription = null,
-            modifier = Modifier.size(240.dp),
+            modifier = Modifier.size(150.dp),
             contentScale = ContentScale.Fit
         )
+
         Text(
             text = "Mind Up",
             color = White,
+            fontSize = 42.sp,
             fontFamily = MindUpFont,
-            fontSize = 50.sp,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.fillMaxWidth().padding(20.dp),
-            textAlign = TextAlign.Center,
-            letterSpacing = (0.sp)
-
+            letterSpacing = 0.sp
         )
 
         Spacer(modifier = Modifier.height(15.dp))
 
         Text(
-            text = "Bem-vindo de volta!",
+            text = "Crie sua conta",
             color = White,
-            fontSize = 34.sp,
+            fontSize = 28.sp,
             fontWeight = FontWeight.Bold
         )
 
-        Spacer(modifier = Modifier.height(35.dp))
+        Spacer(modifier = Modifier.height(30.dp))
+
+        OutlinedTextField(
+            value = nome,
+            onValueChange = { nome = it },
+
+            modifier = Modifier.fillMaxWidth(),
+
+            singleLine = true,
+
+            shape = RoundedCornerShape(20.dp),
+
+            placeholder = {
+                Text("Nome completo")
+            },
+
+            leadingIcon = {
+                Icon(
+                    Icons.Default.Badge,
+                    contentDescription = null
+                )
+            },
+
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedContainerColor = Color.White,
+                unfocusedContainerColor = Color.White,
+
+                focusedBorderColor = Color.Transparent,
+                unfocusedBorderColor = Color.Transparent,
+
+                focusedTextColor = Color.Black,
+                unfocusedTextColor = Color.Black
+            )
+        )
+
+        Spacer(modifier = Modifier.height(18.dp))
+
+        OutlinedTextField(
+            value = nascimento,
+            onValueChange = { nascimento = it },
+
+            modifier = Modifier.fillMaxWidth(),
+
+            singleLine = true,
+
+            shape = RoundedCornerShape(20.dp),
+
+            placeholder = {
+                Text("Data de nascimento")
+            },
+
+            leadingIcon = {
+                Icon(
+                    Icons.Default.CalendarMonth,
+                    contentDescription = null
+                )
+            },
+
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Number
+            ),
+
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedContainerColor = Color.White,
+                unfocusedContainerColor = Color.White,
+
+                focusedBorderColor = Color.Transparent,
+                unfocusedBorderColor = Color.Transparent,
+
+                focusedTextColor = Color.Black,
+                unfocusedTextColor = Color.Black
+            )
+        )
+
+        Spacer(modifier = Modifier.height(18.dp))
 
         OutlinedTextField(
             value = email,
@@ -132,7 +204,6 @@ fun LoginScreen() {
             ),
 
             colors = OutlinedTextFieldDefaults.colors(
-
                 focusedContainerColor = Color.White,
                 unfocusedContainerColor = Color.White,
 
@@ -144,8 +215,7 @@ fun LoginScreen() {
             )
         )
 
-        Spacer(modifier = Modifier.height(20.dp))
-
+        Spacer(modifier = Modifier.height(18.dp))
         OutlinedTextField(
             value = senha,
             onValueChange = { senha = it },
@@ -199,7 +269,6 @@ fun LoginScreen() {
             ),
 
             colors = OutlinedTextFieldDefaults.colors(
-
                 focusedContainerColor = Color.White,
                 unfocusedContainerColor = Color.White,
 
@@ -208,25 +277,14 @@ fun LoginScreen() {
 
                 focusedTextColor = Color.Black,
                 unfocusedTextColor = Color.Black
-
             )
         )
 
-        Spacer(modifier = Modifier.height(10.dp))
-
-        Text(
-            text = "Esqueceu sua senha?",
-            fontSize = (18.sp),
-            color = White,
-            modifier = Modifier
-                .align(Alignment.End)
-                .clickable { }
-        )
-
         Spacer(modifier = Modifier.height(35.dp))
+
         Button(
             onClick = {
-                // Fazer login
+                // Criar conta
             },
             modifier = Modifier
                 .fillMaxWidth()
@@ -253,7 +311,7 @@ fun LoginScreen() {
             ) {
 
                 Text(
-                    text = "Entrar",
+                    text = "Criar Conta",
                     color = White,
                     fontSize = 22.sp,
                     fontWeight = FontWeight.Bold
@@ -266,7 +324,7 @@ fun LoginScreen() {
         Spacer(modifier = Modifier.height(30.dp))
 
         Text(
-            text = "Não possui conta?",
+            text = "Já possui uma conta?",
             color = White,
             fontSize = 18.sp
         )
@@ -274,16 +332,16 @@ fun LoginScreen() {
         Spacer(modifier = Modifier.height(8.dp))
 
         Text(
-            text = "Criar Conta",
+            text = "Entrar",
             color = White,
             fontSize = 18.sp,
             fontWeight = FontWeight.Bold,
             modifier = Modifier.clickable {
-                // Navegar para cadastro
+                // Navegar para Login
             }
         )
 
-        Spacer(modifier = Modifier.height(40.dp))
+        Spacer(modifier = Modifier.height(30.dp))
 
     }
 
@@ -291,7 +349,6 @@ fun LoginScreen() {
 
 @Preview(showBackground = true)
 @Composable
-fun LoginScreenPreview() {
-    LoginScreen()
+fun CadastroScreenPreview() {
+    CadastroScreen()
 }
-
