@@ -1,1 +1,2 @@
-# Mind-Up
+# Mind Up
+Este repositório é dedicado à produção do Trabalho Integrador do terceiro ano do Curso Técnico em Informática integrado ao Ensino Médio do Instituto Federal de Santa Catarina. Será desenvolvido até o final de 2026, pelos alunos: Augusto Signori, Guilherme Lando, Eduardo Cassaniga, Maurício Maciel e Vicente Rauber. O projeto MindUp trata-se de um aplicativo simples dedicado ao cuidado com a saúde mental via técnicas da Terapia Cognitiva Comportamental O documento norteador produzido em 2025, que inclui o planejamento, modelagem e fundamentação teórica do projeto está disponibilizado como PDF.
