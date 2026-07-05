@@ -49,6 +49,10 @@ import com.mindup.mindup.ui.theme.MindUpFont
 import com.mindup.mindup.ui.theme.RosaMindUp
 import com.mindup.mindup.ui.theme.RoxoMindUp
 import com.mindup.mindup.ui.theme.White
+import android.widget.Toast
+import androidx.compose.ui.platform.LocalContext
+import com.mindup.mindup.AuthResult
+import com.mindup.mindup.DBHelper
 
 @Composable
 fun LoginScreen(
@@ -59,6 +63,8 @@ fun LoginScreen(
     var email by remember { mutableStateOf("") }
     var senha by remember { mutableStateOf("") }
     var mostrarSenha by remember { mutableStateOf(false) }
+    val context = LocalContext.current
+    val db = remember { DBHelper(context) }
 
     Column(
         modifier = Modifier
@@ -229,7 +235,52 @@ fun LoginScreen(
         Spacer(modifier = Modifier.height(35.dp))
         Button(
             onClick = {
-                onEntrar()
+
+                when (db.login(email, senha)) {
+
+                    AuthResult.Success -> {
+                        Toast.makeText(
+                            context,
+                            "Login realizado com sucesso!",
+                            Toast.LENGTH_SHORT
+                        ).show()
+
+                        onEntrar()
+                    }
+
+                    AuthResult.EmptyFields -> {
+                        Toast.makeText(
+                            context,
+                            "Preencha todos os campos.",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+
+                    AuthResult.UserNotFound -> {
+                        Toast.makeText(
+                            context,
+                            "Usuário não encontrado.",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+
+                    AuthResult.WrongPassword -> {
+                        Toast.makeText(
+                            context,
+                            "Senha incorreta.",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+
+                    else -> {
+                        Toast.makeText(
+                            context,
+                            "Erro ao realizar login.",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+
             },
             modifier = Modifier
                 .fillMaxWidth()

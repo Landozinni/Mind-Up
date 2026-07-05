@@ -48,6 +48,10 @@ import com.mindup.mindup.ui.theme.RosaMindUp
 import com.mindup.mindup.ui.theme.White
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.ui.platform.LocalContext
+import com.mindup.mindup.DBHelper
+import android.widget.Toast
+import com.mindup.mindup.AuthResult
 @Composable
     fun CadastroScreen(
         onEntrarClick: () -> Unit,
@@ -59,6 +63,9 @@ import androidx.compose.material3.ButtonDefaults
     var email by remember { mutableStateOf("") }
     var senha by remember { mutableStateOf("") }
     var mostrarSenha by remember { mutableStateOf(false) }
+
+    val context = LocalContext.current
+    val db = remember { DBHelper(context) }
 
     Column(
         modifier = Modifier
@@ -287,7 +294,60 @@ import androidx.compose.material3.ButtonDefaults
 
         Button(
             onClick = {
-                onCriarContaClick
+
+                when (db.register(nome, nascimento, email, senha)) {
+
+                    AuthResult.Success -> {
+                        Toast.makeText(
+                            context,
+                            "Conta criada com sucesso!",
+                            Toast.LENGTH_SHORT
+                        ).show()
+
+                        onCriarContaClick()
+                    }
+
+                    AuthResult.EmptyFields -> {
+                        Toast.makeText(
+                            context,
+                            "Preencha todos os campos.",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+
+                    AuthResult.InvalidEmail -> {
+                        Toast.makeText(
+                            context,
+                            "E-mail inválido.",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+
+                    AuthResult.InvalidPassword -> {
+                        Toast.makeText(
+                            context,
+                            "A senha deve ter pelo menos 6 caracteres.",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+
+                    AuthResult.EmailExists -> {
+                        Toast.makeText(
+                            context,
+                            "Este e-mail já está cadastrado.",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+
+                    else -> {
+                        Toast.makeText(
+                            context,
+                            "Erro ao criar conta.",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+
             },
             modifier = Modifier
                 .fillMaxWidth()
@@ -297,31 +357,24 @@ import androidx.compose.material3.ButtonDefaults
                 containerColor = Color.Transparent
             )
         ) {
-
             Box(
                 modifier = Modifier
                     .fillMaxSize()
                     .background(
                         brush = Brush.horizontalGradient(
-                            colors = listOf(
-                                AzulMindUp,
-                                RosaMindUp
-                            )
+                            colors = listOf(AzulMindUp, RosaMindUp)
                         ),
                         shape = RoundedCornerShape(30.dp)
                     ),
                 contentAlignment = Alignment.Center
             ) {
-
                 Text(
                     text = "Criar Conta",
                     color = White,
                     fontSize = 22.sp,
                     fontWeight = FontWeight.Bold
                 )
-
             }
-
         }
 
         Spacer(modifier = Modifier.height(30.dp))
