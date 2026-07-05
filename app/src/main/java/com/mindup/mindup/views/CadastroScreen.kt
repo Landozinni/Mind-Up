@@ -49,7 +49,10 @@ import com.mindup.mindup.ui.theme.White
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 @Composable
-fun CadastroScreen() {
+    fun CadastroScreen(
+        onEntrarClick: () -> Unit,
+        onCriarContaClick: () -> Unit
+) {
 
     var nome by remember { mutableStateOf("") }
     var nascimento by remember { mutableStateOf("") }
@@ -284,7 +287,7 @@ fun CadastroScreen() {
 
         Button(
             onClick = {
-                // Criar conta
+                onCriarContaClick
             },
             modifier = Modifier
                 .fillMaxWidth()
@@ -337,7 +340,7 @@ fun CadastroScreen() {
             fontSize = 18.sp,
             fontWeight = FontWeight.Bold,
             modifier = Modifier.clickable {
-                // Navegar para Login
+                onEntrarClick
             }
         )
 
@@ -350,5 +353,8 @@ fun CadastroScreen() {
 @Preview(showBackground = true)
 @Composable
 fun CadastroScreenPreview() {
-    CadastroScreen()
+    CadastroScreen(
+        onEntrarClick = {},
+        onCriarContaClick = {}
+    )
 }

@@ -1,5 +1,6 @@
 package com.mindup.mindup.views
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -39,7 +40,10 @@ import com.mindup.mindup.ui.theme.White
 import com.mindup.mindup.ui.theme.MindUpFont
 
 @Composable
-    fun Login(){
+fun Login(
+    onEntrar: () -> Unit,
+    onCriarConta: () -> Unit
+){
     Column(
       modifier = Modifier.fillMaxSize().background(
           brush = Brush.linearGradient(
@@ -86,7 +90,7 @@ import com.mindup.mindup.ui.theme.MindUpFont
         Spacer(modifier = Modifier.height(20.dp))
         Button(
             onClick = {
-                // Oque o botão faz(fazer ainda)
+                Log.d("TESTE", "clicou no botão")
             },
             modifier = Modifier
                 .fillMaxWidth()
@@ -126,7 +130,7 @@ import com.mindup.mindup.ui.theme.MindUpFont
         Spacer(modifier = Modifier.height(20.dp))
         Button(
             onClick = {
-                // Oque o botão faz(fazer ainda)
+                onCriarConta()
             },
             modifier = Modifier
                 .fillMaxWidth()
@@ -166,9 +170,12 @@ import com.mindup.mindup.ui.theme.MindUpFont
 
 
 
-@Preview
+@Preview(showBackground = true)
 @Composable
-private fun LoginPreview(){
-    Login()
+fun LoginPreview() {
+    Login(
+        onEntrar = {},
+        onCriarConta = {}
+    )
 }
 

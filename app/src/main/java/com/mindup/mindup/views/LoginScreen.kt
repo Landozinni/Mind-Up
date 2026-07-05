@@ -51,7 +51,10 @@ import com.mindup.mindup.ui.theme.RoxoMindUp
 import com.mindup.mindup.ui.theme.White
 
 @Composable
-fun LoginScreen() {
+fun LoginScreen(
+    onEntrar: () -> Unit,
+    onCriarConta: () -> Unit
+) {
 
     var email by remember { mutableStateOf("") }
     var senha by remember { mutableStateOf("") }
@@ -226,7 +229,7 @@ fun LoginScreen() {
         Spacer(modifier = Modifier.height(35.dp))
         Button(
             onClick = {
-                // Fazer login
+                onEntrar
             },
             modifier = Modifier
                 .fillMaxWidth()
@@ -279,7 +282,7 @@ fun LoginScreen() {
             fontSize = 18.sp,
             fontWeight = FontWeight.Bold,
             modifier = Modifier.clickable {
-                // Navegar para cadastro
+                onCriarConta
             }
         )
 
@@ -292,6 +295,8 @@ fun LoginScreen() {
 @Preview(showBackground = true)
 @Composable
 fun LoginScreenPreview() {
-    LoginScreen()
+    LoginScreen(
+        onEntrar = {},
+        onCriarConta = {}
+    )
 }
-
