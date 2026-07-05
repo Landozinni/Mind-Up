@@ -90,7 +90,8 @@ fun Login(
         Spacer(modifier = Modifier.height(20.dp))
         Button(
             onClick = {
-                Log.d("TESTE", "clicou no botão")
+                onEntrar()
+
             },
             modifier = Modifier
                 .fillMaxWidth()

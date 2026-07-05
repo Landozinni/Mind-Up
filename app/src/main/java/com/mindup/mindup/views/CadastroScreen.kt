@@ -340,7 +340,7 @@ import androidx.compose.material3.ButtonDefaults
             fontSize = 18.sp,
             fontWeight = FontWeight.Bold,
             modifier = Modifier.clickable {
-                onEntrarClick
+                onEntrarClick()
             }
         )
 

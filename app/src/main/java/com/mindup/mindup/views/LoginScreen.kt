@@ -229,7 +229,7 @@ fun LoginScreen(
         Spacer(modifier = Modifier.height(35.dp))
         Button(
             onClick = {
-                onEntrar
+                onEntrar()
             },
             modifier = Modifier
                 .fillMaxWidth()
@@ -282,7 +282,7 @@ fun LoginScreen(
             fontSize = 18.sp,
             fontWeight = FontWeight.Bold,
             modifier = Modifier.clickable {
-                onCriarConta
+                onCriarConta()
             }
         )
 
