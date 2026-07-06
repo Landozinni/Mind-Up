@@ -4,13 +4,24 @@ import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.mindup.mindup.ui.theme.MindUpFont
+import com.mindup.mindup.ui.theme.White
+import com.mindup.mindup.ui.theme.AzulMindUp
+import com.mindup.mindup.ui.theme.MindUpFont
+import com.mindup.mindup.ui.theme.RosaMindUp
+import com.mindup.mindup.ui.theme.RoxoMindUp
+import com.mindup.mindup.ui.theme.White
 
 class DiaryPage : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,28 +46,36 @@ class DiaryPage : AppCompatActivity() {
 @Composable
 fun DiaryScreen() {
     // State to hold the diary entry text
-    var diaryNotes by remember { mutableStateOf("") }
+    var diaryNotes by remember { mutableStateOf("o dia de hoje...") }
 
     Column(
         modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 24.dp)
-            .systemBarsPadding(), // Handles system bar overlaps cleanly without XML listeners
-        verticalArrangement = Arrangement.SpaceBetween,
-        horizontalAlignment = Alignment.Start
+
+            .background(
+            brush = Brush.linearGradient(
+                colors = listOf(
+                    RosaMindUp,
+                    AzulMindUp
+                )
+            )
+            )
+
+
+
     ) {
 
-        // 1. Top Section: Big text header
+        // titulo da pagina
         Text(
-            text = "What happened today?",
-            style = MaterialTheme.typography.headlineLarge,
-            color = MaterialTheme.colorScheme.onBackground,
-            modifier = Modifier
-                .padding(top = 32.dp)
-                .fillMaxWidth()
-        )
+                text = "COMO FOI SEU DIA HOJE?",
+            color = White,
+            fontSize = 42.sp,
+            fontFamily = MindUpFont,
 
-        // 2. Middle Section: Placeholder for your mood selector assets
+            textAlign = TextAlign.Center
+
+            )
+
+        // aqui vai o seletor de sentimentos do dia
         // Using weight(1f) ensures this expands to take up all available center space
         Box(
             modifier = Modifier
@@ -65,13 +84,13 @@ fun DiaryScreen() {
             contentAlignment = Alignment.Center
         ) {
             Text(
-                text = "(Mood Selector Assets Go Here)",
+                text = "(seletor de sentimentos aqui)",
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
             )
         }
 
-        // 3. Bottom Section: Description and notes text box
+        // descrição de eventos do dia
         OutlinedTextField(
             value = diaryNotes,
             onValueChange = { diaryNotes = it },

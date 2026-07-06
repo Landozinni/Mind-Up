@@ -101,6 +101,8 @@ import com.mindup.mindup.AuthResult
             fontSize = 42.sp,
             fontFamily = MindUpFont,
             letterSpacing = 0.sp
+
+
         )
 
         Spacer(modifier = Modifier.height(15.dp))
