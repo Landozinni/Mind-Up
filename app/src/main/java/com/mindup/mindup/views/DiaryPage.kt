@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
@@ -11,6 +12,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -83,24 +86,57 @@ fun DiaryScreen() {
                 .weight(1f),
             contentAlignment = Alignment.Center
         ) {
-            Text(
-                text = "(seletor de sentimentos aqui)",
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
+
+            Image(
+                painter = painterResource(R.drawable.baseline_sentiment_satisfied_alt_24),
+                contentDescription = null,
+                modifier = Modifier.size(240.dp),
+                contentScale = ContentScale.Fit
             )
         }
 
         // descrição de eventos do dia
+
         OutlinedTextField(
             value = diaryNotes,
             onValueChange = { diaryNotes = it },
-            label = { Text("Notes & Descriptions") },
-            placeholder = { Text("How are you feeling? Write it down...") },
+            label = { Text("Descrições do dia") },
+            placeholder = { Text("Como se sente?") },
             modifier = Modifier
                 .fillMaxWidth()
-                .height(200.dp) // Fixed height to give plenty of typing room
-                .padding(bottom = 24.dp),
+                .height(180.dp), // Slightly adjusted height to accommodate buttons nicely
             shape = MaterialTheme.shapes.medium
         )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // 4. Action Buttons Row (Save and Go Back)
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 24.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            // Secondary action button
+            OutlinedButton(
+                onClick = { /* Visual only: Handle navigation back later */ },
+                modifier = Modifier.weight(1f)
+            ) {
+                Text("Back")
+            }
+
+            Spacer(modifier = Modifier.width(16.dp))
+
+            // Primary action button
+            Button(
+                onClick = { /* Visual only: Handle saving entry later */ },
+                modifier = Modifier.weight(1f)
+            ) {
+                Text("Save")
+            }
+        }
+
+
     }
 }
