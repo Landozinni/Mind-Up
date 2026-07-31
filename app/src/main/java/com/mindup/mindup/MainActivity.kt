@@ -12,7 +12,9 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
 
         setContent {
-            NavGraph()
+
+                NavGraph()
+                }
+                }
         }
-    }
-}
+

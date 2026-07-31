@@ -17,12 +17,12 @@ sealed class AuthResult {
 }
 
 class DBHelper(context: Context) :
-    SQLiteOpenHelper(context, "app.db", null, 1) {
+    SQLiteOpenHelper(context, "app.db", null, 2) {
 
     override fun onCreate(db: SQLiteDatabase) {
         db.execSQL(
             """
-            CREATE TABLE users (
+            CREATE TABLE IF NOT EXISTS users (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 nome TEXT,
                 data_nascimento TEXT,
@@ -31,11 +31,32 @@ class DBHelper(context: Context) :
             )
             """.trimIndent()
         )
+
+        db.execSQL(
+            """
+            CREATE TABLE IF NOT EXISTS diario (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                humor TEXT,
+                descricao TEXT,
+                data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+            """.trimIndent()
+        )
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
-        db.execSQL("DROP TABLE IF EXISTS users")
-        onCreate(db)
+        if (oldVersion < 2) {
+            db.execSQL(
+                """
+                CREATE TABLE IF NOT EXISTS diario (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    humor TEXT,
+                    descricao TEXT,
+                    data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                )
+                """.trimIndent()
+            )
+        }
     }
 
     fun register(
@@ -126,5 +147,30 @@ class DBHelper(context: Context) :
         } else {
             AuthResult.WrongPassword
         }
+    }
+
+    fun salvarEntradaDiario(humor: String, descricao: String): Boolean {
+        val humorLimpo = humor.trim()
+        val descricaoLimpa = descricao.trim()
+
+        val db = writableDatabase
+        db.execSQL(
+            """
+            CREATE TABLE IF NOT EXISTS diario (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                humor TEXT,
+                descricao TEXT,
+                data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+            """.trimIndent()
+        )
+
+        val values = ContentValues().apply {
+            put("humor", humorLimpo)
+            put("descricao", descricaoLimpa)
+        }
+
+        val result = db.insert("diario", null, values)
+        return result != -1L
     }
 }

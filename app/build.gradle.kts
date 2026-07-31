@@ -11,6 +11,7 @@ android {
         }
     }
 
+
     defaultConfig {
         applicationId = "com.mindup.mindup"
         minSdk = 24
@@ -19,6 +20,17 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        ndk {
+            abiFilters.addAll(listOf("armeabi-v7a", "arm64-v8a", "x86", "x86_64"))
+        }
+    }
+
+    splits {
+        abi {
+            isEnable = false
+            isUniversalApk = true
+        }
     }
 
     buildTypes {

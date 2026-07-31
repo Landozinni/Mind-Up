@@ -6,12 +6,17 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.mindup.mindup.views.CadastroScreen
+import com.mindup.mindup.views.Dass21Screen
 import com.mindup.mindup.views.Login
 import com.mindup.mindup.views.LoginScreen
+import com.mindup.mindup.views.Diary
+import com.mindup.mindup.views.DiaryScreen
 
 object Routes {
     const val LOGIN = "login"
     const val CADASTRO = "cadastro"
+    const val DIARIO = "diary"
+    const val DASS21 = "dass21"
 }
 
 @Preview
@@ -39,10 +44,18 @@ fun NavGraph() {
         composable("loginScreen") {
             LoginScreen(
                 onEntrar = {
-                    // Home depois
+                    navController.navigate(Routes.DIARIO)
                 },
                 onCriarConta = {
                     navController.navigate("cadastro")
+                }
+            )
+        }
+
+        composable(Routes.DIARIO) {
+            DiaryScreen(
+                onVoltar = {
+                    navController.popBackStack()
                 }
             )
         }
@@ -57,4 +70,16 @@ fun NavGraph() {
                 }
             )
         }
-    }}
+
+        composable(Routes.DASS21) {
+            Dass21Screen(
+                onVoltar = {
+                    navController.popBackStack()
+                },
+                onFinalizar = {
+                    navController.popBackStack()
+                }
+            )
+        }
+    }
+}
