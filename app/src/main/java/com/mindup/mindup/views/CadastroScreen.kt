@@ -49,9 +49,8 @@ import com.mindup.mindup.ui.theme.White
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.ui.platform.LocalContext
-import com.mindup.mindup.DBHelper
 import android.widget.Toast
-import com.mindup.mindup.AuthResult
+import com.google.firebase.auth.FirebaseAuth
 @Composable
     fun CadastroScreen(
         onEntrarClick: () -> Unit,
@@ -64,8 +63,9 @@ import com.mindup.mindup.AuthResult
     var senha by remember { mutableStateOf("") }
     var mostrarSenha by remember { mutableStateOf(false) }
 
+    val auth = remember { FirebaseAuth.getInstance() }
+
     val context = LocalContext.current
-    val db = remember { DBHelper(context) }
 
     Column(
         modifier = Modifier
@@ -297,59 +297,71 @@ import com.mindup.mindup.AuthResult
         Button(
             onClick = {
 
-                when (db.register(nome, nascimento, email, senha)) {
+                if (
+                    nome.isBlank() ||
+                    nascimento.isBlank() ||
+                    email.isBlank() ||
+                    senha.isBlank()
+                ) {
 
-                    AuthResult.Success -> {
-                        Toast.makeText(
-                            context,
-                            "Conta criada com sucesso!",
-                            Toast.LENGTH_SHORT
-                        ).show()
+                    Toast.makeText(
+                        context,
+                        "Preencha todos os campos.",
+                        Toast.LENGTH_SHORT
+                    ).show()
 
-                        onCriarContaClick()
-                    }
+                } else {
 
-                    AuthResult.EmptyFields -> {
-                        Toast.makeText(
-                            context,
-                            "Preencha todos os campos.",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
+                    auth.createUserWithEmailAndPassword(email, senha)
+                        .addOnCompleteListener { task ->
 
-                    AuthResult.InvalidEmail -> {
-                        Toast.makeText(
-                            context,
-                            "E-mail inválido.",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
+                            if (task.isSuccessful) {
 
-                    AuthResult.InvalidPassword -> {
-                        Toast.makeText(
-                            context,
-                            "A senha deve ter pelo menos 6 caracteres.",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
+                                Toast.makeText(
+                                    context,
+                                    "Conta criada com sucesso!",
+                                    Toast.LENGTH_SHORT
+                                ).show()
 
-                    AuthResult.EmailExists -> {
-                        Toast.makeText(
-                            context,
-                            "Este e-mail já está cadastrado.",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
+                                onCriarContaClick()
 
-                    else -> {
-                        Toast.makeText(
-                            context,
-                            "Erro ao criar conta.",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
+                            } else {
+
+                                val mensagem = when {
+
+                                    task.exception?.message?.contains(
+                                        "email address is already in use",
+                                        ignoreCase = true
+                                    ) == true ->
+                                        "Este e-mail já está cadastrado."
+
+                                    task.exception?.message?.contains(
+                                        "password should be at least 6",
+                                        ignoreCase = true
+                                    ) == true ->
+                                        "A senha deve ter pelo menos 6 caracteres."
+
+                                    task.exception?.message?.contains(
+                                        "badly formatted",
+                                        ignoreCase = true
+                                    ) == true ->
+                                        "E-mail inválido."
+
+                                    else ->
+                                        "Erro ao criar conta."
+                                }
+
+                                Toast.makeText(
+                                    context,
+                                    mensagem,
+                                    Toast.LENGTH_SHORT
+                                ).show()
+
+                            }
+
+                        }
+
                 }
-
             },
             modifier = Modifier
                 .fillMaxWidth()

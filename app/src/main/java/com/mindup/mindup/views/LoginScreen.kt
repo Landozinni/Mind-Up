@@ -51,9 +51,7 @@ import com.mindup.mindup.ui.theme.RoxoMindUp
 import com.mindup.mindup.ui.theme.White
 import android.widget.Toast
 import androidx.compose.ui.platform.LocalContext
-import com.mindup.mindup.AuthResult
-import com.mindup.mindup.DBHelper
-
+import com.google.firebase.auth.FirebaseAuth
 @Composable
 fun LoginScreen(
     onEntrar: () -> Unit,
@@ -64,7 +62,7 @@ fun LoginScreen(
     var senha by remember { mutableStateOf("") }
     var mostrarSenha by remember { mutableStateOf(false) }
     val context = LocalContext.current
-    val db = remember { DBHelper(context) }
+    val auth = remember { FirebaseAuth.getInstance() }
 
     Column(
         modifier = Modifier
@@ -236,49 +234,41 @@ fun LoginScreen(
         Button(
             onClick = {
 
-                when (db.login(email, senha)) {
+                if (email.isBlank() || senha.isBlank()) {
 
-                    AuthResult.Success -> {
-                        Toast.makeText(
-                            context,
-                            "Login realizado com sucesso!",
-                            Toast.LENGTH_SHORT
-                        ).show()
+                    Toast.makeText(
+                        context,
+                        "Preencha todos os campos.",
+                        Toast.LENGTH_SHORT
+                    ).show()
 
-                        onEntrar()
-                    }
+                } else {
 
-                    AuthResult.EmptyFields -> {
-                        Toast.makeText(
-                            context,
-                            "Preencha todos os campos.",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
+                    auth.signInWithEmailAndPassword(email, senha)
+                        .addOnCompleteListener { task ->
 
-                    AuthResult.UserNotFound -> {
-                        Toast.makeText(
-                            context,
-                            "Usuário não encontrado.",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
+                            if (task.isSuccessful) {
 
-                    AuthResult.WrongPassword -> {
-                        Toast.makeText(
-                            context,
-                            "Senha incorreta.",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
+                                Toast.makeText(
+                                    context,
+                                    "Login realizado com sucesso!",
+                                    Toast.LENGTH_SHORT
+                                ).show()
 
-                    else -> {
-                        Toast.makeText(
-                            context,
-                            "Erro ao realizar login.",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
+                                onEntrar()
+
+                            } else {
+
+                                Toast.makeText(
+                                    context,
+                                    "E-mail ou senha inválidos.",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+
+                            }
+
+                        }
+
                 }
 
             },

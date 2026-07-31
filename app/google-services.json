@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "426364454805",
+    "project_id": "mindup-32114",
+    "storage_bucket": "mindup-32114.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:426364454805:android:50500acbacf0e75f08189c",
+        "android_client_info": {
+          "package_name": "com.mindup.mindup"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCk3snY_FQFPo25Un5hjdYoQj0M3dJPJic"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
