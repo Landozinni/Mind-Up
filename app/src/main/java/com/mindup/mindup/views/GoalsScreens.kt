@@ -20,18 +20,30 @@ import com.mindup.mindup.components.BottomBar
 import com.mindup.mindup.components.GoalCard
 import com.mindup.mindup.components.GoalDialog
 import com.mindup.mindup.model.Goal
+import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.mindup.mindup.MindUpApplication
+import com.mindup.mindup.viewmodel.GoalViewModel
+import com.mindup.mindup.viewmodel.GoalViewModelFactory
 
-@Composable
-fun GoalsScreen() {
+    @Composable
+    fun GoalsScreen() {
 
-    val goals = remember {
-        mutableStateListOf<Goal>()
-    }
+        val application =
+            LocalContext.current.applicationContext as MindUpApplication
 
-    var showDialog by remember {
-        mutableStateOf(false)
-    }
+        val factory = remember {
+            GoalViewModelFactory(application.container.goalRepository)
+        }
 
+        val viewModel: GoalViewModel = viewModel(factory = factory)
+
+        val goals by viewModel.goals.collectAsState(initial = emptyList())
+
+        var showDialog by remember {
+            mutableStateOf(false)
+        }
     if (showDialog) {
 
         GoalDialog(
@@ -42,9 +54,10 @@ fun GoalsScreen() {
 
             onSave = { goal ->
 
-                goals.add(goal)
+                viewModel.insertGoal(goal)
 
                 showDialog = false
+
 
             }
 
