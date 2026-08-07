@@ -51,6 +51,25 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.ui.platform.LocalContext
 import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
+import java.text.SimpleDateFormat
+import java.util.Locale
+import androidx.compose.ui.text.input.TextFieldValue
+
+fun dataNascimentoValida(data: String): Boolean {
+
+    if (data.length != 10) return false
+
+    val formato = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+    formato.isLenient = false
+
+    return try {
+        formato.parse(data)
+        true
+    } catch (e: Exception) {
+        false
+    }
+}
+
 @Composable
     fun CadastroScreen(
         onEntrarClick: () -> Unit,
@@ -58,7 +77,7 @@ import com.google.firebase.auth.FirebaseAuth
 ) {
 
     var nome by remember { mutableStateOf("") }
-    var nascimento by remember { mutableStateOf("") }
+    var nascimento by remember { mutableStateOf(TextFieldValue("")) }
     var email by remember { mutableStateOf("") }
     var senha by remember { mutableStateOf("") }
     var mostrarSenha by remember { mutableStateOf(false) }
@@ -153,7 +172,30 @@ import com.google.firebase.auth.FirebaseAuth
 
         OutlinedTextField(
             value = nascimento,
-            onValueChange = { nascimento = it },
+            onValueChange = { valor ->
+
+                val numeros = valor.text
+                    .filter { it.isDigit() }
+                    .take(8)
+
+                val dataFormatada = when {
+                    numeros.length <= 2 ->
+                        numeros
+
+                    numeros.length <= 4 ->
+                        "${numeros.substring(0, 2)}/${numeros.substring(2)}"
+
+                    else ->
+                        "${numeros.substring(0, 2)}/${numeros.substring(2, 4)}/${numeros.substring(4)}"
+                }
+
+                nascimento = TextFieldValue(
+                    text = dataFormatada,
+                    selection = androidx.compose.ui.text.TextRange(dataFormatada.length)
+                )
+            },
+
+            
 
             modifier = Modifier.fillMaxWidth(),
 
@@ -299,7 +341,7 @@ import com.google.firebase.auth.FirebaseAuth
 
                 if (
                     nome.isBlank() ||
-                    nascimento.isBlank() ||
+                    nascimento.text.isBlank() ||
                     email.isBlank() ||
                     senha.isBlank()
                 ) {
@@ -311,6 +353,17 @@ import com.google.firebase.auth.FirebaseAuth
                     ).show()
 
                 } else {
+
+                    if (!dataNascimentoValida(nascimento.text)) {
+
+                        Toast.makeText(
+                            context,
+                            "Digite uma data válida (dd/MM/yyyy).",
+                            Toast.LENGTH_SHORT
+                        ).show()
+
+                        return@Button
+                    }
 
                     auth.createUserWithEmailAndPassword(email, senha)
                         .addOnCompleteListener { task ->
