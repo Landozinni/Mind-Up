@@ -1,8 +1,10 @@
+
 package com.mindup.mindup.views
 
+import android.widget.Toast
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,16 +17,11 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
-import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material.icons.filled.Visibility
-import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
@@ -37,33 +34,26 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.google.firebase.auth.FirebaseAuth
 import com.mindup.mindup.R
 import com.mindup.mindup.ui.theme.AzulMindUp
 import com.mindup.mindup.ui.theme.MindUpFont
 import com.mindup.mindup.ui.theme.RosaMindUp
-import com.mindup.mindup.ui.theme.RoxoMindUp
 import com.mindup.mindup.ui.theme.White
-import android.widget.Toast
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalInspectionMode
-import com.google.firebase.auth.FirebaseAuth
+
 @Composable
-fun LoginScreen(
-    onEntrar: () -> Unit,
-    onCriarConta: () -> Unit,
-    onEsqueceuSenha: () -> Unit
+fun PasswordReset(
+    onVoltar: () -> Unit
 ) {
 
     var email by remember { mutableStateOf("") }
-    var senha by remember { mutableStateOf("") }
-    var mostrarSenha by remember { mutableStateOf(false) }
-    val context = LocalContext.current
+
+    val context = androidx.compose.ui.platform.LocalContext.current
     val isPreview = LocalInspectionMode.current
     val auth = remember { if (isPreview) null else FirebaseAuth.getInstance() }
 
@@ -85,45 +75,54 @@ fun LoginScreen(
         verticalArrangement = Arrangement.Center
     ) {
 
-        Spacer(modifier = Modifier.height(40.dp))
+        Spacer(modifier = Modifier.height(30.dp))
 
         Image(
             painter = painterResource(R.drawable.mindup_logo),
             contentDescription = null,
-            modifier = Modifier.size(240.dp),
+            modifier = Modifier.size(200.dp),
             contentScale = ContentScale.Fit
         )
+
         Text(
             text = "Mind Up",
             color = White,
             fontFamily = MindUpFont,
             fontSize = 50.sp,
             fontWeight = FontWeight.Bold,
-            modifier = Modifier.fillMaxWidth().padding(20.dp),
-            textAlign = TextAlign.Center,
-            letterSpacing = (0.sp)
-
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(10.dp),
+            textAlign = TextAlign.Center
         )
 
-        Spacer(modifier = Modifier.height(15.dp))
+        Spacer(modifier = Modifier.height(25.dp))
 
         Text(
-            text = "Bem-vindo de volta!",
+            text = "Esqueceu sua senha?",
             color = White,
-            fontSize = 34.sp,
-            fontWeight = FontWeight.Bold
+            fontSize = 30.sp,
+            fontWeight = FontWeight.Bold,
+            textAlign = TextAlign.Center
         )
 
-        Spacer(modifier = Modifier.height(35.dp))
+        Spacer(modifier = Modifier.height(12.dp))
+
+        Text(
+            text = "Digite seu e-mail e enviaremos um link para você redefinir sua senha.",
+            color = White,
+            fontSize = 17.sp,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Spacer(modifier = Modifier.height(30.dp))
 
         OutlinedTextField(
             value = email,
             onValueChange = { email = it },
-
             modifier = Modifier.fillMaxWidth(),
-
             singleLine = true,
-
             shape = RoundedCornerShape(20.dp),
 
             placeholder = {
@@ -132,7 +131,7 @@ fun LoginScreen(
 
             leadingIcon = {
                 Icon(
-                    Icons.Default.Email,
+                    imageVector = Icons.Default.Email,
                     contentDescription = null
                 )
             },
@@ -142,7 +141,6 @@ fun LoginScreen(
             ),
 
             colors = OutlinedTextFieldDefaults.colors(
-
                 focusedContainerColor = Color.White,
                 unfocusedContainerColor = Color.White,
 
@@ -154,133 +152,52 @@ fun LoginScreen(
             )
         )
 
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(25.dp))
 
-        OutlinedTextField(
-            value = senha,
-            onValueChange = { senha = it },
-
-            modifier = Modifier.fillMaxWidth(),
-
-            singleLine = true,
-
-            shape = RoundedCornerShape(20.dp),
-
-            placeholder = {
-                Text("Senha")
-            },
-
-            leadingIcon = {
-                Icon(
-                    Icons.Default.Lock,
-                    contentDescription = null
-                )
-            },
-
-            trailingIcon = {
-
-                IconButton(
-                    onClick = {
-                        mostrarSenha = !mostrarSenha
-                    }
-                ) {
-
-                    Icon(
-                        imageVector =
-                            if (mostrarSenha)
-                                Icons.Default.Visibility
-                            else
-                                Icons.Default.VisibilityOff,
-                        contentDescription = null
-                    )
-
-                }
-
-            },
-
-            visualTransformation =
-                if (mostrarSenha)
-                    VisualTransformation.None
-                else
-                    PasswordVisualTransformation(),
-
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Password
-            ),
-
-            colors = OutlinedTextFieldDefaults.colors(
-
-                focusedContainerColor = Color.White,
-                unfocusedContainerColor = Color.White,
-
-                focusedBorderColor = Color.Transparent,
-                unfocusedBorderColor = Color.Transparent,
-
-                focusedTextColor = Color.Black,
-                unfocusedTextColor = Color.Black
-
-            )
-        )
-
-        Spacer(modifier = Modifier.height(10.dp))
-
-        Text(
-            text = "Esqueceu sua senha?",
-            fontSize = (18.sp),
-            color = White,
-            modifier = Modifier
-                .align(Alignment.End)
-                .clickable {
-                    onEsqueceuSenha()
-                }
-        )
-
-        Spacer(modifier = Modifier.height(35.dp))
         Button(
             onClick = {
 
-                if (email.isBlank() || senha.isBlank()) {
+                if (email.isBlank()) {
 
                     Toast.makeText(
                         context,
-                        "Preencha todos os campos.",
+                        "Digite seu e-mail.",
                         Toast.LENGTH_SHORT
                     ).show()
 
                 } else {
 
-                    auth?.signInWithEmailAndPassword(email, senha)
+                    auth?.sendPasswordResetEmail(email)
                         ?.addOnCompleteListener { task ->
 
                             if (task.isSuccessful) {
 
                                 Toast.makeText(
                                     context,
-                                    "Login realizado com sucesso!",
-                                    Toast.LENGTH_SHORT
+                                    "E-mail de recuperação enviado!",
+                                    Toast.LENGTH_LONG
                                 ).show()
 
-                                onEntrar()
+                                onVoltar()
 
                             } else {
 
                                 Toast.makeText(
                                     context,
-                                    "E-mail ou senha inválidos.",
+                                    "Não foi possível enviar o e-mail.",
                                     Toast.LENGTH_SHORT
                                 ).show()
-
                             }
-
                         }
-
                 }
-
             },
+
             modifier = Modifier
                 .fillMaxWidth()
                 .height(60.dp),
+
             shape = RoundedCornerShape(30.dp),
+
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color.Transparent
             )
@@ -302,48 +219,39 @@ fun LoginScreen(
             ) {
 
                 Text(
-                    text = "Entrar",
+                    text = "Enviar link",
                     color = White,
                     fontSize = 22.sp,
                     fontWeight = FontWeight.Bold
                 )
-
             }
-
         }
 
-        Spacer(modifier = Modifier.height(30.dp))
+        Spacer(modifier = Modifier.height(25.dp))
 
         Text(
-            text = "Não possui conta?",
-            color = White,
-            fontSize = 18.sp
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        Text(
-            text = "Criar Conta",
+            text = "Voltar para o login",
             color = White,
             fontSize = 18.sp,
             fontWeight = FontWeight.Bold,
-            modifier = Modifier.clickable {
-                onCriarConta()
-            }
+            modifier = Modifier
+                .background(
+                    color = Color.Transparent
+                )
+                .padding(8.dp)
+                .then(
+                    Modifier
+                )
         )
 
-        Spacer(modifier = Modifier.height(40.dp))
-
+        Spacer(modifier = Modifier.height(30.dp))
     }
-
 }
 
 @Preview(showBackground = true)
 @Composable
-fun LoginScreenPreview() {
-    LoginScreen(
-        onEntrar = {},
-        onCriarConta = {},
-        onEsqueceuSenha = {}
+fun ForgotPasswordScreenPreview() {
+    PasswordReset(
+        onVoltar = {}
     )
 }

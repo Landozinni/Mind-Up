@@ -11,10 +11,12 @@ import com.mindup.mindup.views.Login
 import com.mindup.mindup.views.LoginScreen
 import com.mindup.mindup.views.Diary
 import com.mindup.mindup.views.DiaryScreen
+import com.mindup.mindup.views.PasswordReset
 
 object Routes {
     const val LOGIN = "login"
     const val CADASTRO = "cadastro"
+    const val ESQUECEU_SENHA = "esqueceuSenha"
     const val DIARIO = "diary"
     const val DASS21 = "dass21"
 }
@@ -48,6 +50,9 @@ fun NavGraph() {
                 },
                 onCriarConta = {
                     navController.navigate("cadastro")
+                },
+                onEsqueceuSenha = {
+                    navController.navigate("esqueceuSenha")
                 }
             )
         }
@@ -80,6 +85,13 @@ fun NavGraph() {
                     navController.popBackStack()
                 },
                 onFinalizar = {
+                    navController.popBackStack()
+                }
+            )
+        }
+        composable(Routes.ESQUECEU_SENHA) {
+            PasswordReset(
+                onVoltar = {
                     navController.popBackStack()
                 }
             )
