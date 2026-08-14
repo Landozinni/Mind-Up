@@ -17,7 +17,7 @@ sealed class AuthResult {
 }
 
 class DBHelper(context: Context) :
-    SQLiteOpenHelper(context, "app.db", null, 2) {
+    SQLiteOpenHelper(context, "app.db", null, 3) {
 
     override fun onCreate(db: SQLiteDatabase) {
         db.execSQL(
@@ -42,6 +42,21 @@ class DBHelper(context: Context) :
             )
             """.trimIndent()
         )
+
+        db.execSQL(
+            """
+            CREATE TABLE IF NOT EXISTS dass21_resultados (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                depressao_score INTEGER,
+                depressao_classificacao TEXT,
+                ansiedade_score INTEGER,
+                ansiedade_classificacao TEXT,
+                estresse_score INTEGER,
+                estresse_classificacao TEXT,
+                data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+            """.trimIndent()
+        )
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
@@ -52,6 +67,22 @@ class DBHelper(context: Context) :
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     humor TEXT,
                     descricao TEXT,
+                    data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                )
+                """.trimIndent()
+            )
+        }
+        if (oldVersion < 3) {
+            db.execSQL(
+                """
+                CREATE TABLE IF NOT EXISTS dass21_resultados (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    depressao_score INTEGER,
+                    depressao_classificacao TEXT,
+                    ansiedade_score INTEGER,
+                    ansiedade_classificacao TEXT,
+                    estresse_score INTEGER,
+                    estresse_classificacao TEXT,
                     data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                 )
                 """.trimIndent()
@@ -171,6 +202,43 @@ class DBHelper(context: Context) :
         }
 
         val result = db.insert("diario", null, values)
+        return result != -1L
+    }
+
+    fun salvarResultadoDass21(
+        depressaoScore: Int,
+        depressaoClassificacao: String,
+        ansiedadeScore: Int,
+        ansiedadeClassificacao: String,
+        estresseScore: Int,
+        estresseClassificacao: String
+    ): Boolean {
+        val db = writableDatabase
+        db.execSQL(
+            """
+            CREATE TABLE IF NOT EXISTS dass21_resultados (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                depressao_score INTEGER,
+                depressao_classificacao TEXT,
+                ansiedade_score INTEGER,
+                ansiedade_classificacao TEXT,
+                estresse_score INTEGER,
+                estresse_classificacao TEXT,
+                data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+            """.trimIndent()
+        )
+
+        val values = ContentValues().apply {
+            put("depressao_score", depressaoScore)
+            put("depressao_classificacao", depressaoClassificacao)
+            put("ansiedade_score", ansiedadeScore)
+            put("ansiedade_classificacao", ansiedadeClassificacao)
+            put("estresse_score", estresseScore)
+            put("estresse_classificacao", estresseClassificacao)
+        }
+
+        val result = db.insert("dass21_resultados", null, values)
         return result != -1L
     }
 }

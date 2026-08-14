@@ -56,6 +56,9 @@ fun NavGraph() {
             DiaryScreen(
                 onVoltar = {
                     navController.popBackStack()
+                },
+                onNavegarParaDass = {
+                    navController.navigate(Routes.DASS21)
                 }
             )
         }
