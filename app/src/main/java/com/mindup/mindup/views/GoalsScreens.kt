@@ -22,6 +22,7 @@ import com.mindup.mindup.components.GoalDialog
 import com.mindup.mindup.model.Goal
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mindup.mindup.MindUpApplication
 import com.mindup.mindup.viewmodel.GoalViewModel
@@ -29,190 +30,183 @@ import com.mindup.mindup.viewmodel.GoalViewModelFactory
 
     @Composable
     fun GoalsScreen() {
+        val context = LocalContext.current
 
-        val application =
-            LocalContext.current.applicationContext as MindUpApplication
+        // Fix for ClassCastException in Compose Preview
+        // In Preview, applicationContext is not MindUpApplication
+        if (LocalInspectionMode.current) {
+            GoalsScreenContent(
+                goals = emptyList(),
+                onAddGoal = {}
+            )
+            return
+        }
+
+        val application = context.applicationContext as MindUpApplication
 
         val factory = remember {
             GoalViewModelFactory(application.container.goalRepository)
         }
 
         val viewModel: GoalViewModel = viewModel(factory = factory)
-
         val goals by viewModel.goals.collectAsState(initial = emptyList())
 
+        GoalsScreenContent(
+            goals = goals,
+            onAddGoal = { goal ->
+                viewModel.insertGoal(goal)
+            }
+        )
+    }
+
+    @Composable
+    fun GoalsScreenContent(
+        goals: List<Goal>,
+        onAddGoal: (Goal) -> Unit
+    ) {
         var showDialog by remember {
             mutableStateOf(false)
         }
-    if (showDialog) {
 
-        GoalDialog(
-
-            onDismiss = {
-                showDialog = false
-            },
-
-            onSave = { goal ->
-
-                viewModel.insertGoal(goal)
-
-                showDialog = false
-
-
-            }
-
-        )
-
-    }
-
-    Scaffold(
-
-        bottomBar = {
-            BottomBar()
-        },
-
-        floatingActionButton = {
-
-            FloatingActionButton(
-                onClick = {
-                    showDialog = true
+        if (showDialog) {
+            GoalDialog(
+                onDismiss = {
+                    showDialog = false
                 },
-                containerColor = Color(0xFF8B5CF6)
-            ) {
-
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = "Nova Meta",
-                    tint = Color.White
-                )
-
-            }
-
+                onSave = { goal ->
+                    onAddGoal(goal)
+                    showDialog = false
+                }
+            )
         }
 
-    ) { paddingValues ->
-
-        Column(
-
-            modifier = Modifier
-                .fillMaxSize()
-                .background(
-                    Brush.verticalGradient(
-                        listOf(
-                            Color(0xFFF9F5FF),
-                            Color.White
+        Scaffold(
+            bottomBar = {
+                BottomBar()
+            },
+            floatingActionButton = {
+                FloatingActionButton(
+                    onClick = {
+                        showDialog = true
+                    },
+                    containerColor = Color(0xFF8B5CF6)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Add,
+                        contentDescription = "Nova Meta",
+                        tint = Color.White
+                    )
+                }
+            }
+        ) { paddingValues ->
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(
+                        Brush.verticalGradient(
+                            listOf(
+                                Color(0xFFF9F5FF),
+                                Color.White
+                            )
                         )
                     )
-                )
-                .padding(paddingValues)
-                .padding(horizontal = 20.dp)
-
-        ) {
-
-            Spacer(modifier = Modifier.height(20.dp))
-
-            Text(
-                text = "🎯 Metas",
-                fontSize = 32.sp,
-                fontWeight = FontWeight.Bold
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Text(
-                text = "Pequenos hábitos constroem grandes mudanças.",
-                color = Color.Gray,
-                fontSize = 16.sp
-            )
-
-            Spacer(modifier = Modifier.height(24.dp))
-
-            Button(
-                onClick = {
-                    showDialog = true
-                },
-                modifier = Modifier.fillMaxWidth()
+                    .padding(paddingValues)
+                    .padding(horizontal = 20.dp)
             ) {
+                Spacer(modifier = Modifier.height(20.dp))
 
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = null
+                Text(
+                    text = "🎯 Metas",
+                    fontSize = 32.sp,
+                    fontWeight = FontWeight.Bold
                 )
 
-                Spacer(modifier = Modifier.width(8.dp))
+                Spacer(modifier = Modifier.height(8.dp))
 
-                Text("Nova Meta")
+                Text(
+                    text = "Pequenos hábitos constroem grandes mudanças.",
+                    color = Color.Gray,
+                    fontSize = 16.sp
+                )
 
-            }
+                Spacer(modifier = Modifier.height(24.dp))
 
-            Spacer(modifier = Modifier.height(20.dp))
+                Button(
+                    onClick = {
+                        showDialog = true
+                    },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Add,
+                        contentDescription = null
+                    )
 
-            LazyColumn {
-                if (goals.isEmpty()) {
+                    Spacer(modifier = Modifier.width(8.dp))
+
+                    Text("Nova Meta")
+                }
+
+                Spacer(modifier = Modifier.height(20.dp))
+
+                LazyColumn {
+                    if (goals.isEmpty()) {
+                        item {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(top = 80.dp),
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Text(
+                                    text = "🎯",
+                                    fontSize = 64.sp
+                                )
+
+                                Spacer(modifier = Modifier.height(16.dp))
+
+                                Text(
+                                    text = "Você ainda não possui metas.",
+                                    fontSize = 22.sp,
+                                    fontWeight = FontWeight.Bold
+                                )
+
+                                Spacer(modifier = Modifier.height(8.dp))
+
+                                Text(
+                                    text = "Clique em \"Nova Meta\" para criar sua primeira meta.",
+                                    color = Color.Gray
+                                )
+                            }
+                        }
+                    } else {
+                        items(goals) { goal ->
+                            GoalCard(
+                                emoji = goal.emoji,
+                                title = goal.title,
+                                description = goal.description,
+                                progress = goal.progress,
+                                progressText = goal.progressText
+                            )
+                        }
+                    }
 
                     item {
-
-                        Column(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(top = 80.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-
-                            Text(
-                                text = "🎯",
-                                fontSize = 64.sp
-                            )
-
-                            Spacer(modifier = Modifier.height(16.dp))
-
-                            Text(
-                                text = "Você ainda não possui metas.",
-                                fontSize = 22.sp,
-                                fontWeight = FontWeight.Bold
-                            )
-
-                            Spacer(modifier = Modifier.height(8.dp))
-
-                            Text(
-                                text = "Clique em \"Nova Meta\" para criar sua primeira meta.",
-                                color = Color.Gray
-                            )
-
-                        }
-
+                        Spacer(modifier = Modifier.height(90.dp))
                     }
-
-                } else {
-
-                    items(goals) { goal ->
-
-                        GoalCard(
-                            emoji = goal.emoji,
-                            title = goal.title,
-                            description = goal.description,
-                            progress = goal.progress,
-                            progressText = goal.progressText
-                        )
-
-                    }
-
                 }
-
-                item {
-                    Spacer(modifier = Modifier.height(90.dp))
-                }
-
             }
-
         }
-
     }
-
-}
 
 @Preview(showBackground = true)
 @Composable
 fun GoalsScreenPreview() {
-    GoalsScreen()
+    GoalsScreenContent(
+        goals = listOf(
+            Goal(1, "🎯", "Meta Diária", "Beber 2L de água", 0.5f, "5 de 10 dias"),
+            Goal(2, "🚀", "Estudos", "Estudar Kotlin por 1h", 0.8f, "8 de 10 dias")
+        ),
+        onAddGoal = {}
+    )
 }
