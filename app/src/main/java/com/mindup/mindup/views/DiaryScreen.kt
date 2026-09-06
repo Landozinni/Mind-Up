@@ -40,6 +40,8 @@ import com.mindup.mindup.ui.theme.MindUpFont
 import com.mindup.mindup.ui.theme.RosaMindUp
 import com.mindup.mindup.ui.theme.White
 
+import com.mindup.mindup.viewmodel.DiaryViewModel
+
 class Diary : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,13 +68,20 @@ private data class MoodItem(
 
 @Composable
 fun DiaryScreen(
-    onVoltar: () -> Unit = {}
+    onVoltar: () -> Unit = {},
+    onNavegarParaDass: () -> Unit = {},
+    viewModel: DiaryViewModel = remember { DiaryViewModel() }
 ) {
-    var diaryNotes by remember { mutableStateOf("") }
-    var selectedMood by remember { mutableStateOf<String?>(null) }
-
+    val uiState by viewModel.uiState.collectAsState()
     val context = LocalContext.current
     val db = remember { DBHelper(context) }
+
+    LaunchedEffect(uiState.errorMessage) {
+        uiState.errorMessage?.let { msg ->
+            Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
+            viewModel.clearErrorMessage()
+        }
+    }
 
     val moodOptions = listOf(
         MoodItem("muito mal", Icons.Default.SentimentVeryDissatisfied, Color(0xFFFF5252)),
@@ -136,13 +145,13 @@ fun DiaryScreen(
             verticalAlignment = Alignment.CenterVertically
         ) {
             moodOptions.forEach { mood ->
-                val isSelected = selectedMood == mood.label
+                val isSelected = uiState.selectedMood == mood.label
 
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier
                         .weight(1f)
-                        .clickable { selectedMood = mood.label }
+                        .clickable { viewModel.onMoodSelected(mood.label) }
                         .padding(4.dp)
                 ) {
                     Box(
@@ -195,8 +204,8 @@ fun DiaryScreen(
         )
 
         OutlinedTextField(
-            value = diaryNotes,
-            onValueChange = { diaryNotes = it },
+            value = uiState.notes,
+            onValueChange = { viewModel.onNotesChanged(it) },
             placeholder = {
                 Text(
                     text = "Como se sente hoje? Escreva sobre o seu dia...",
@@ -249,38 +258,19 @@ fun DiaryScreen(
             // Primary action button - SALVAR
             Button(
                 onClick = {
-                    val mood = selectedMood
-                    if (mood == null) {
-                        Toast.makeText(
-                            context,
-                            "Por favor, selecione como você se sente hoje.",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    } else if (diaryNotes.trim().isEmpty()) {
-                        Toast.makeText(
-                            context,
-                            "Preencha a descrição do seu dia.",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    } else {
-                        val sucesso = db.salvarEntradaDiario(mood, diaryNotes)
-                        if (sucesso) {
+                    viewModel.saveDiaryEntry(
+                        dbHelper = db,
+                        onSavedSuccessfully = {
                             Toast.makeText(
                                 context,
-                                "Entrada do diário salva com sucesso!",
+                                "Entrada salva! Vamos para o questionário DASS-21.",
                                 Toast.LENGTH_SHORT
                             ).show()
-                            diaryNotes = ""
-                            selectedMood = null
-                        } else {
-                            Toast.makeText(
-                                context,
-                                "Erro ao salvar no diário.",
-                                Toast.LENGTH_SHORT
-                            ).show()
+                            onNavegarParaDass()
                         }
-                    }
+                    )
                 },
+                enabled = !uiState.isSaving,
                 modifier = Modifier
                     .weight(1f)
                     .height(50.dp),
@@ -291,7 +281,7 @@ fun DiaryScreen(
                 )
             ) {
                 Text(
-                    text = "SALVAR",
+                    text = if (uiState.isSaving) "SALVANDO..." else "SALVAR",
                     fontWeight = FontWeight.Bold,
                     fontSize = 16.sp
                 )
