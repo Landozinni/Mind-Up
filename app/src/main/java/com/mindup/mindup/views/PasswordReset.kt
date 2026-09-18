@@ -5,6 +5,7 @@ import android.widget.Toast
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -61,15 +62,15 @@ fun PasswordReset(
         modifier = Modifier
             .fillMaxSize()
             .background(
-                brush = Brush.linearGradient(
-                    colors = listOf(
-                        RosaMindUp,
-                        AzulMindUp
+                Brush.verticalGradient(
+                    listOf(
+                        Color(0xFFF9F5FF),
+                        Color.White
                     )
                 )
             )
             .verticalScroll(rememberScrollState())
-            .padding(horizontal = 30.dp),
+            .padding(horizontal = 28.dp),
 
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
@@ -80,59 +81,61 @@ fun PasswordReset(
         Image(
             painter = painterResource(R.drawable.mindup_logo),
             contentDescription = null,
-            modifier = Modifier.size(200.dp),
+            modifier = Modifier.size(160.dp),
             contentScale = ContentScale.Fit
         )
 
         Text(
             text = "Mind Up",
-            color = White,
+            color = Color(0xFF8B5CF6),
             fontFamily = MindUpFont,
-            fontSize = 50.sp,
+            fontSize = 44.sp,
             fontWeight = FontWeight.Bold,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(10.dp),
+                .padding(8.dp),
             textAlign = TextAlign.Center
         )
 
-        Spacer(modifier = Modifier.height(25.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
         Text(
             text = "Esqueceu sua senha?",
-            color = White,
-            fontSize = 30.sp,
+            color = Color(0xFF2D2A32),
+            fontSize = 26.sp,
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center
         )
 
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(10.dp))
 
         Text(
             text = "Digite seu e-mail e enviaremos um link para você redefinir sua senha.",
-            color = White,
-            fontSize = 17.sp,
+            color = Color(0xFF6B7280),
+            fontSize = 15.sp,
             textAlign = TextAlign.Center,
+            lineHeight = 22.sp,
             modifier = Modifier.fillMaxWidth()
         )
 
-        Spacer(modifier = Modifier.height(30.dp))
+        Spacer(modifier = Modifier.height(28.dp))
 
         OutlinedTextField(
             value = email,
             onValueChange = { email = it },
             modifier = Modifier.fillMaxWidth(),
             singleLine = true,
-            shape = RoundedCornerShape(20.dp),
+            shape = RoundedCornerShape(16.dp),
 
             placeholder = {
-                Text("E-mail")
+                Text("E-mail", color = Color.Gray)
             },
 
             leadingIcon = {
                 Icon(
                     imageVector = Icons.Default.Email,
-                    contentDescription = null
+                    contentDescription = null,
+                    tint = Color(0xFF8B5CF6)
                 )
             },
 
@@ -144,15 +147,15 @@ fun PasswordReset(
                 focusedContainerColor = Color.White,
                 unfocusedContainerColor = Color.White,
 
-                focusedBorderColor = Color.Transparent,
-                unfocusedBorderColor = Color.Transparent,
+                focusedBorderColor = Color(0xFF8B5CF6),
+                unfocusedBorderColor = Color(0xFFE5E7EB),
 
-                focusedTextColor = Color.Black,
-                unfocusedTextColor = Color.Black
+                focusedTextColor = Color(0xFF1F2937),
+                unfocusedTextColor = Color(0xFF1F2937)
             )
         )
 
-        Spacer(modifier = Modifier.height(25.dp))
+        Spacer(modifier = Modifier.height(24.dp))
 
         Button(
             onClick = {
@@ -194,54 +197,35 @@ fun PasswordReset(
 
             modifier = Modifier
                 .fillMaxWidth()
-                .height(60.dp),
+                .height(54.dp),
 
-            shape = RoundedCornerShape(30.dp),
+            shape = RoundedCornerShape(27.dp),
 
             colors = ButtonDefaults.buttonColors(
-                containerColor = Color.Transparent
-            )
+                containerColor = Color(0xFF8B5CF6)
+            ),
+            elevation = ButtonDefaults.buttonElevation(defaultElevation = 4.dp)
         ) {
-
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(
-                        brush = Brush.horizontalGradient(
-                            colors = listOf(
-                                AzulMindUp,
-                                RosaMindUp
-                            )
-                        ),
-                        shape = RoundedCornerShape(30.dp)
-                    ),
-                contentAlignment = Alignment.Center
-            ) {
-
-                Text(
-                    text = "Enviar link",
-                    color = White,
-                    fontSize = 22.sp,
-                    fontWeight = FontWeight.Bold
-                )
-            }
+            Text(
+                text = "Enviar link",
+                color = Color.White,
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold
+            )
         }
 
-        Spacer(modifier = Modifier.height(25.dp))
+        Spacer(modifier = Modifier.height(20.dp))
 
         Text(
             text = "Voltar para o login",
-            color = White,
-            fontSize = 18.sp,
+            color = Color(0xFF8B5CF6),
+            fontSize = 16.sp,
             fontWeight = FontWeight.Bold,
             modifier = Modifier
-                .background(
-                    color = Color.Transparent
-                )
+                .clickable {
+                    onVoltar()
+                }
                 .padding(8.dp)
-                .then(
-                    Modifier
-                )
         )
 
         Spacer(modifier = Modifier.height(30.dp))

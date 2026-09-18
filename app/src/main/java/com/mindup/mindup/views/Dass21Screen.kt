@@ -168,10 +168,10 @@ fun Dass21Screen(
             modifier = Modifier
                 .fillMaxSize()
                 .background(
-                    brush = Brush.verticalGradient(
-                        colors = listOf(
-                            RosaMindUp.copy(alpha = 0.25f),
-                            AzulMindUp.copy(alpha = 0.25f)
+                    Brush.verticalGradient(
+                        listOf(
+                            Color(0xFFF9F5FF),
+                            Color.White
                         )
                     )
                 )

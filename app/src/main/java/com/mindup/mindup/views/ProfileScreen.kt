@@ -18,11 +18,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.tooling.preview.Preview
 
-private val OffWhite = Color(0xFFF8F7F3)
+import androidx.compose.ui.graphics.Brush
+
+private val OffWhite = Color(0xFFF4F0FF)
 private val DarkText = Color(0xFF292929)
 private val GrayText = Color(0xFF777777)
 private val CardColor = Color(0xFFFFFFFF)
-private val AccentColor = Color(0xFF8A9A7B)
+private val AccentColor = Color(0xFF8B5CF6)
 
 @Composable
 fun ProfileScreen(
@@ -35,9 +37,17 @@ fun ProfileScreen(
     var notificationsEnabled by remember { mutableStateOf(true) }
     var darkModeEnabled by remember { mutableStateOf(false) }
 
-    Surface(
-        modifier = Modifier.fillMaxSize(),
-        color = OffWhite
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(
+                Brush.verticalGradient(
+                    listOf(
+                        Color(0xFFF9F5FF),
+                        Color.White
+                    )
+                )
+            )
     ) {
 
         Column(

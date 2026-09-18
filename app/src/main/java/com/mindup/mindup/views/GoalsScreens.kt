@@ -27,23 +27,27 @@ import com.mindup.mindup.MindUpApplication
 import com.mindup.mindup.viewmodel.GoalViewModel
 import com.mindup.mindup.viewmodel.GoalViewModelFactory
 
-    @Composable
-    fun GoalsScreen() {
+import com.mindup.mindup.navigation.Routes
 
-        val application =
-            LocalContext.current.applicationContext as MindUpApplication
+@Composable
+fun GoalsScreen(
+    bottomBar: @Composable () -> Unit = { BottomBar(currentRoute = Routes.METAS) }
+) {
 
-        val factory = remember {
-            GoalViewModelFactory(application.container.goalRepository)
-        }
+    val application =
+        LocalContext.current.applicationContext as MindUpApplication
 
-        val viewModel: GoalViewModel = viewModel(factory = factory)
+    val factory = remember {
+        GoalViewModelFactory(application.container.goalRepository)
+    }
 
-        val goals by viewModel.goals.collectAsState(initial = emptyList())
+    val viewModel: GoalViewModel = viewModel(factory = factory)
 
-        var showDialog by remember {
-            mutableStateOf(false)
-        }
+    val goals by viewModel.goals.collectAsState(initial = emptyList())
+
+    var showDialog by remember {
+        mutableStateOf(false)
+    }
     if (showDialog) {
 
         GoalDialog(
@@ -67,9 +71,7 @@ import com.mindup.mindup.viewmodel.GoalViewModelFactory
 
     Scaffold(
 
-        bottomBar = {
-            BottomBar()
-        },
+        bottomBar = bottomBar,
 
         floatingActionButton = {
 

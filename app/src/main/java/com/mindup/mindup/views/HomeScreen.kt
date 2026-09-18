@@ -47,15 +47,27 @@ data class SummaryData(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
-    userName: String = "Usuário" // Passe o nome vindo do banco ou ViewModel aqui
+    userName: String = "Usuário",
+    onNavigateToMetas: () -> Unit = {},
+    onNavigateToDiario: () -> Unit = {},
+    onNavigateToPerfil: () -> Unit = {},
+    bottomBar: @Composable () -> Unit = { CustomBottomNavigation() }
 ) {
     Scaffold(
-        containerColor = BackgroundLight,
-        bottomBar = { CustomBottomNavigation() }
+        containerColor = Color.Transparent,
+        bottomBar = bottomBar
     ) { paddingValues ->
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
+                .background(
+                    Brush.verticalGradient(
+                        listOf(
+                            Color(0xFFF9F5FF),
+                            Color.White
+                        )
+                    )
+                )
                 .padding(paddingValues)
                 .padding(horizontal = 20.dp),
             verticalArrangement = Arrangement.spacedBy(20.dp)
@@ -69,7 +81,7 @@ fun HomeScreen(
             item { DailyQuoteCard() }
 
             // 3. Banner principal "Começar agora"
-            item { ActionBannerSection() }
+            item { ActionBannerSection(onStartClick = onNavigateToDiario) }
 
             // 4. Seção "Seu resumo"
             item { SummarySection() }
@@ -128,7 +140,8 @@ fun DailyQuoteCard() {
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(20.dp),
-        colors = CardDefaults.cardColors(containerColor = Color(0xFFF1EBFF))
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White)
     ) {
         Column(modifier = Modifier.padding(20.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -154,10 +167,13 @@ fun DailyQuoteCard() {
 }
 
 @Composable
-fun ActionBannerSection() {
+fun ActionBannerSection(onStartClick: () -> Unit = {}) {
     Card(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onStartClick() },
         shape = RoundedCornerShape(20.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
         colors = CardDefaults.cardColors(containerColor = Color.Transparent)
     ) {
         Box(
@@ -250,6 +266,7 @@ fun SummarySection() {
                 Card(
                     modifier = Modifier.weight(1f),
                     shape = RoundedCornerShape(16.dp),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
                     colors = CardDefaults.cardColors(containerColor = data.containerColor)
                 ) {
                     Column(
@@ -282,7 +299,8 @@ fun SuggestionCard() {
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(20.dp),
-        colors = CardDefaults.cardColors(containerColor = Color(0xFFF4EFFD))
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White)
     ) {
         Row(
             modifier = Modifier

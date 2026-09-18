@@ -19,6 +19,7 @@ import androidx.compose.material3.Text
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.mindup.mindup.components.BottomBar
+import com.mindup.mindup.views.HomeScreen
 import com.mindup.mindup.views.GoalsScreen
 import com.mindup.mindup.views.ProfileScreen
 object Routes {
@@ -133,29 +134,23 @@ fun NavGraph() {
 
         composable(Routes.INICIO) {
 
-            Scaffold(
-
+            HomeScreen(
                 bottomBar = {
                     BottomBar(
                         navController = navController,
                         currentRoute = Routes.INICIO
                     )
+                },
+                onNavigateToMetas = {
+                    navController.navigate(Routes.METAS)
+                },
+                onNavigateToDiario = {
+                    navController.navigate(Routes.DIARIO)
+                },
+                onNavigateToPerfil = {
+                    navController.navigate(Routes.PERFIL)
                 }
-
-            ) { paddingValues ->
-
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(paddingValues),
-                    contentAlignment = Alignment.Center
-                ) {
-
-                    Text(
-                        text = "Tela Inicial"
-                    )
-                }
-            }
+            )
         }
 
 
@@ -165,26 +160,14 @@ fun NavGraph() {
 
         composable(Routes.METAS) {
 
-            Scaffold(
-
+            GoalsScreen(
                 bottomBar = {
                     BottomBar(
                         navController = navController,
                         currentRoute = Routes.METAS
                     )
                 }
-
-            ) { paddingValues ->
-
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(paddingValues)
-                ) {
-
-                    GoalsScreen()
-                }
-            }
+            )
         }
 
 

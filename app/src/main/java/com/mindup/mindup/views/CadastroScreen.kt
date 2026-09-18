@@ -90,50 +90,49 @@ fun dataNascimentoValida(data: String): Boolean {
         modifier = Modifier
             .fillMaxSize()
             .background(
-                brush = Brush.linearGradient(
-                    colors = listOf(
-                        RosaMindUp,
-                        AzulMindUp
+                Brush.verticalGradient(
+                    listOf(
+                        Color(0xFFF9F5FF),
+                        Color.White
                     )
                 )
             )
             .verticalScroll(rememberScrollState())
-            .padding(horizontal = 30.dp),
+            .padding(horizontal = 28.dp),
 
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
 
     ) {
 
-        Spacer(modifier = Modifier.height(35.dp))
+        Spacer(modifier = Modifier.height(30.dp))
 
         Image(
             painter = painterResource(R.drawable.mindup_logo),
             contentDescription = null,
-            modifier = Modifier.size(150.dp),
+            modifier = Modifier.size(140.dp),
             contentScale = ContentScale.Fit
         )
 
         Text(
             text = "Mind Up",
-            color = White,
+            color = Color(0xFF8B5CF6),
             fontSize = 42.sp,
             fontFamily = MindUpFont,
+            fontWeight = FontWeight.Bold,
             letterSpacing = 0.sp
-
-
         )
 
-        Spacer(modifier = Modifier.height(15.dp))
+        Spacer(modifier = Modifier.height(8.dp))
 
         Text(
             text = "Crie sua conta",
-            color = White,
-            fontSize = 28.sp,
+            color = Color(0xFF2D2A32),
+            fontSize = 24.sp,
             fontWeight = FontWeight.Bold
         )
 
-        Spacer(modifier = Modifier.height(30.dp))
+        Spacer(modifier = Modifier.height(24.dp))
 
         OutlinedTextField(
             value = nome,
@@ -143,16 +142,17 @@ fun dataNascimentoValida(data: String): Boolean {
 
             singleLine = true,
 
-            shape = RoundedCornerShape(20.dp),
+            shape = RoundedCornerShape(16.dp),
 
             placeholder = {
-                Text("Nome completo")
+                Text("Nome completo", color = Color.Gray)
             },
 
             leadingIcon = {
                 Icon(
                     Icons.Default.Badge,
-                    contentDescription = null
+                    contentDescription = null,
+                    tint = Color(0xFF8B5CF6)
                 )
             },
 
@@ -160,15 +160,15 @@ fun dataNascimentoValida(data: String): Boolean {
                 focusedContainerColor = Color.White,
                 unfocusedContainerColor = Color.White,
 
-                focusedBorderColor = Color.Transparent,
-                unfocusedBorderColor = Color.Transparent,
+                focusedBorderColor = Color(0xFF8B5CF6),
+                unfocusedBorderColor = Color(0xFFE5E7EB),
 
-                focusedTextColor = Color.Black,
-                unfocusedTextColor = Color.Black
+                focusedTextColor = Color(0xFF1F2937),
+                unfocusedTextColor = Color(0xFF1F2937)
             )
         )
 
-        Spacer(modifier = Modifier.height(18.dp))
+        Spacer(modifier = Modifier.height(14.dp))
 
         OutlinedTextField(
             value = nascimento,
@@ -195,22 +195,21 @@ fun dataNascimentoValida(data: String): Boolean {
                 )
             },
 
-            
-
             modifier = Modifier.fillMaxWidth(),
 
             singleLine = true,
 
-            shape = RoundedCornerShape(20.dp),
+            shape = RoundedCornerShape(16.dp),
 
             placeholder = {
-                Text("Data de nascimento")
+                Text("Data de nascimento", color = Color.Gray)
             },
 
             leadingIcon = {
                 Icon(
                     Icons.Default.CalendarMonth,
-                    contentDescription = null
+                    contentDescription = null,
+                    tint = Color(0xFF8B5CF6)
                 )
             },
 
@@ -222,15 +221,15 @@ fun dataNascimentoValida(data: String): Boolean {
                 focusedContainerColor = Color.White,
                 unfocusedContainerColor = Color.White,
 
-                focusedBorderColor = Color.Transparent,
-                unfocusedBorderColor = Color.Transparent,
+                focusedBorderColor = Color(0xFF8B5CF6),
+                unfocusedBorderColor = Color(0xFFE5E7EB),
 
-                focusedTextColor = Color.Black,
-                unfocusedTextColor = Color.Black
+                focusedTextColor = Color(0xFF1F2937),
+                unfocusedTextColor = Color(0xFF1F2937)
             )
         )
 
-        Spacer(modifier = Modifier.height(18.dp))
+        Spacer(modifier = Modifier.height(14.dp))
 
         OutlinedTextField(
             value = email,
@@ -240,16 +239,17 @@ fun dataNascimentoValida(data: String): Boolean {
 
             singleLine = true,
 
-            shape = RoundedCornerShape(20.dp),
+            shape = RoundedCornerShape(16.dp),
 
             placeholder = {
-                Text("E-mail")
+                Text("E-mail", color = Color.Gray)
             },
 
             leadingIcon = {
                 Icon(
                     Icons.Default.Email,
-                    contentDescription = null
+                    contentDescription = null,
+                    tint = Color(0xFF8B5CF6)
                 )
             },
 
@@ -261,15 +261,15 @@ fun dataNascimentoValida(data: String): Boolean {
                 focusedContainerColor = Color.White,
                 unfocusedContainerColor = Color.White,
 
-                focusedBorderColor = Color.Transparent,
-                unfocusedBorderColor = Color.Transparent,
+                focusedBorderColor = Color(0xFF8B5CF6),
+                unfocusedBorderColor = Color(0xFFE5E7EB),
 
-                focusedTextColor = Color.Black,
-                unfocusedTextColor = Color.Black
+                focusedTextColor = Color(0xFF1F2937),
+                unfocusedTextColor = Color(0xFF1F2937)
             )
         )
 
-        Spacer(modifier = Modifier.height(18.dp))
+        Spacer(modifier = Modifier.height(14.dp))
         OutlinedTextField(
             value = senha,
             onValueChange = { senha = it },
@@ -278,16 +278,17 @@ fun dataNascimentoValida(data: String): Boolean {
 
             singleLine = true,
 
-            shape = RoundedCornerShape(20.dp),
+            shape = RoundedCornerShape(16.dp),
 
             placeholder = {
-                Text("Senha")
+                Text("Senha", color = Color.Gray)
             },
 
             leadingIcon = {
                 Icon(
                     Icons.Default.Lock,
-                    contentDescription = null
+                    contentDescription = null,
+                    tint = Color(0xFF8B5CF6)
                 )
             },
 
@@ -305,7 +306,8 @@ fun dataNascimentoValida(data: String): Boolean {
                                 Icons.Default.Visibility
                             else
                                 Icons.Default.VisibilityOff,
-                        contentDescription = null
+                        contentDescription = null,
+                        tint = Color.Gray
                     )
 
                 }
@@ -326,15 +328,15 @@ fun dataNascimentoValida(data: String): Boolean {
                 focusedContainerColor = Color.White,
                 unfocusedContainerColor = Color.White,
 
-                focusedBorderColor = Color.Transparent,
-                unfocusedBorderColor = Color.Transparent,
+                focusedBorderColor = Color(0xFF8B5CF6),
+                unfocusedBorderColor = Color(0xFFE5E7EB),
 
-                focusedTextColor = Color.Black,
-                unfocusedTextColor = Color.Black
+                focusedTextColor = Color(0xFF1F2937),
+                unfocusedTextColor = Color(0xFF1F2937)
             )
         )
 
-        Spacer(modifier = Modifier.height(35.dp))
+        Spacer(modifier = Modifier.height(28.dp))
 
         Button(
             onClick = {
@@ -418,46 +420,35 @@ fun dataNascimentoValida(data: String): Boolean {
             },
             modifier = Modifier
                 .fillMaxWidth()
-                .height(60.dp),
-            shape = RoundedCornerShape(30.dp),
+                .height(54.dp),
+            shape = RoundedCornerShape(27.dp),
             colors = ButtonDefaults.buttonColors(
-                containerColor = Color.Transparent
-            )
+                containerColor = Color(0xFF8B5CF6)
+            ),
+            elevation = ButtonDefaults.buttonElevation(defaultElevation = 4.dp)
         ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(
-                        brush = Brush.horizontalGradient(
-                            colors = listOf(AzulMindUp, RosaMindUp)
-                        ),
-                        shape = RoundedCornerShape(30.dp)
-                    ),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = "Criar Conta",
-                    color = White,
-                    fontSize = 22.sp,
-                    fontWeight = FontWeight.Bold
-                )
-            }
+            Text(
+                text = "Criar Conta",
+                color = Color.White,
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold
+            )
         }
 
-        Spacer(modifier = Modifier.height(30.dp))
+        Spacer(modifier = Modifier.height(24.dp))
 
         Text(
             text = "Já possui uma conta?",
-            color = White,
-            fontSize = 18.sp
+            color = Color(0xFF6B7280),
+            fontSize = 16.sp
         )
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(6.dp))
 
         Text(
             text = "Entrar",
-            color = White,
-            fontSize = 18.sp,
+            color = Color(0xFF8B5CF6),
+            fontSize = 16.sp,
             fontWeight = FontWeight.Bold,
             modifier = Modifier.clickable {
                 onEntrarClick()

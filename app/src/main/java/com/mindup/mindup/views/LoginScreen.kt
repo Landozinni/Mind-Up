@@ -71,50 +71,49 @@ fun LoginScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(
-                brush = Brush.linearGradient(
-                    colors = listOf(
-                        RosaMindUp,
-                        AzulMindUp
+                Brush.verticalGradient(
+                    listOf(
+                        Color(0xFFF9F5FF),
+                        Color.White
                     )
                 )
             )
             .verticalScroll(rememberScrollState())
-            .padding(horizontal = 30.dp),
+            .padding(horizontal = 28.dp),
 
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
 
-        Spacer(modifier = Modifier.height(40.dp))
+        Spacer(modifier = Modifier.height(30.dp))
 
         Image(
             painter = painterResource(R.drawable.mindup_logo),
             contentDescription = null,
-            modifier = Modifier.size(240.dp),
+            modifier = Modifier.size(180.dp),
             contentScale = ContentScale.Fit
         )
         Text(
             text = "Mind Up",
-            color = White,
+            color = Color(0xFF8B5CF6),
             fontFamily = MindUpFont,
-            fontSize = 50.sp,
+            fontSize = 44.sp,
             fontWeight = FontWeight.Bold,
-            modifier = Modifier.fillMaxWidth().padding(20.dp),
+            modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
             textAlign = TextAlign.Center,
-            letterSpacing = (0.sp)
-
+            letterSpacing = 0.sp
         )
 
-        Spacer(modifier = Modifier.height(15.dp))
+        Spacer(modifier = Modifier.height(8.dp))
 
         Text(
             text = "Bem-vindo de volta!",
-            color = White,
-            fontSize = 34.sp,
+            color = Color(0xFF2D2A32),
+            fontSize = 26.sp,
             fontWeight = FontWeight.Bold
         )
 
-        Spacer(modifier = Modifier.height(35.dp))
+        Spacer(modifier = Modifier.height(28.dp))
 
         OutlinedTextField(
             value = email,
@@ -124,16 +123,17 @@ fun LoginScreen(
 
             singleLine = true,
 
-            shape = RoundedCornerShape(20.dp),
+            shape = RoundedCornerShape(16.dp),
 
             placeholder = {
-                Text("E-mail")
+                Text("E-mail", color = Color.Gray)
             },
 
             leadingIcon = {
                 Icon(
                     Icons.Default.Email,
-                    contentDescription = null
+                    contentDescription = null,
+                    tint = Color(0xFF8B5CF6)
                 )
             },
 
@@ -142,19 +142,18 @@ fun LoginScreen(
             ),
 
             colors = OutlinedTextFieldDefaults.colors(
-
                 focusedContainerColor = Color.White,
                 unfocusedContainerColor = Color.White,
 
-                focusedBorderColor = Color.Transparent,
-                unfocusedBorderColor = Color.Transparent,
+                focusedBorderColor = Color(0xFF8B5CF6),
+                unfocusedBorderColor = Color(0xFFE5E7EB),
 
-                focusedTextColor = Color.Black,
-                unfocusedTextColor = Color.Black
+                focusedTextColor = Color(0xFF1F2937),
+                unfocusedTextColor = Color(0xFF1F2937)
             )
         )
 
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
         OutlinedTextField(
             value = senha,
@@ -164,16 +163,17 @@ fun LoginScreen(
 
             singleLine = true,
 
-            shape = RoundedCornerShape(20.dp),
+            shape = RoundedCornerShape(16.dp),
 
             placeholder = {
-                Text("Senha")
+                Text("Senha", color = Color.Gray)
             },
 
             leadingIcon = {
                 Icon(
                     Icons.Default.Lock,
-                    contentDescription = null
+                    contentDescription = null,
+                    tint = Color(0xFF8B5CF6)
                 )
             },
 
@@ -191,7 +191,8 @@ fun LoginScreen(
                                 Icons.Default.Visibility
                             else
                                 Icons.Default.VisibilityOff,
-                        contentDescription = null
+                        contentDescription = null,
+                        tint = Color.Gray
                     )
 
                 }
@@ -209,25 +210,24 @@ fun LoginScreen(
             ),
 
             colors = OutlinedTextFieldDefaults.colors(
-
                 focusedContainerColor = Color.White,
                 unfocusedContainerColor = Color.White,
 
-                focusedBorderColor = Color.Transparent,
-                unfocusedBorderColor = Color.Transparent,
+                focusedBorderColor = Color(0xFF8B5CF6),
+                unfocusedBorderColor = Color(0xFFE5E7EB),
 
-                focusedTextColor = Color.Black,
-                unfocusedTextColor = Color.Black
-
+                focusedTextColor = Color(0xFF1F2937),
+                unfocusedTextColor = Color(0xFF1F2937)
             )
         )
 
-        Spacer(modifier = Modifier.height(10.dp))
+        Spacer(modifier = Modifier.height(12.dp))
 
         Text(
             text = "Esqueceu sua senha?",
-            fontSize = (18.sp),
-            color = White,
+            fontSize = 15.sp,
+            color = Color(0xFF8B5CF6),
+            fontWeight = FontWeight.Medium,
             modifier = Modifier
                 .align(Alignment.End)
                 .clickable {
@@ -235,7 +235,7 @@ fun LoginScreen(
                 }
         )
 
-        Spacer(modifier = Modifier.height(35.dp))
+        Spacer(modifier = Modifier.height(28.dp))
         Button(
             onClick = {
 
@@ -279,60 +279,42 @@ fun LoginScreen(
             },
             modifier = Modifier
                 .fillMaxWidth()
-                .height(60.dp),
-            shape = RoundedCornerShape(30.dp),
+                .height(54.dp),
+            shape = RoundedCornerShape(27.dp),
             colors = ButtonDefaults.buttonColors(
-                containerColor = Color.Transparent
-            )
+                containerColor = Color(0xFF8B5CF6)
+            ),
+            elevation = ButtonDefaults.buttonElevation(defaultElevation = 4.dp)
         ) {
-
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(
-                        brush = Brush.horizontalGradient(
-                            colors = listOf(
-                                AzulMindUp,
-                                RosaMindUp
-                            )
-                        ),
-                        shape = RoundedCornerShape(30.dp)
-                    ),
-                contentAlignment = Alignment.Center
-            ) {
-
-                Text(
-                    text = "Entrar",
-                    color = White,
-                    fontSize = 22.sp,
-                    fontWeight = FontWeight.Bold
-                )
-
-            }
-
+            Text(
+                text = "Entrar",
+                color = Color.White,
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold
+            )
         }
 
-        Spacer(modifier = Modifier.height(30.dp))
+        Spacer(modifier = Modifier.height(24.dp))
 
         Text(
             text = "Não possui conta?",
-            color = White,
-            fontSize = 18.sp
+            color = Color(0xFF6B7280),
+            fontSize = 16.sp
         )
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(6.dp))
 
         Text(
             text = "Criar Conta",
-            color = White,
-            fontSize = 18.sp,
+            color = Color(0xFF8B5CF6),
+            fontSize = 16.sp,
             fontWeight = FontWeight.Bold,
             modifier = Modifier.clickable {
                 onCriarConta()
             }
         )
 
-        Spacer(modifier = Modifier.height(40.dp))
+        Spacer(modifier = Modifier.height(30.dp))
 
     }
 

@@ -95,109 +95,112 @@ fun DiaryScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(
-                brush = Brush.linearGradient(
-                    colors = listOf(
-                        RosaMindUp,
-                        AzulMindUp
+                Brush.verticalGradient(
+                    listOf(
+                        Color(0xFFF9F5FF),
+                        Color.White
                     )
                 )
             )
             .verticalScroll(rememberScrollState())
-            .padding(horizontal = 24.dp, vertical = 32.dp),
+            .padding(horizontal = 24.dp, vertical = 28.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(10.dp))
 
         // Titulo da pagina
         Text(
             text = "COMO FOI SEU DIA HOJE?",
-            color = White,
-            fontSize = 32.sp,
+            color = Color(0xFF2D2A32),
+            fontSize = 28.sp,
             fontFamily = MindUpFont,
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center,
             modifier = Modifier.fillMaxWidth()
         )
 
-        Spacer(modifier = Modifier.height(32.dp))
+        Spacer(modifier = Modifier.height(24.dp))
 
         // Seletor de sentimentos (Mood Selector)
         Text(
             text = "Selecione o seu humor:",
-            color = White,
-            fontSize = 18.sp,
-            fontWeight = FontWeight.Medium,
+            color = Color(0xFF2D2A32),
+            fontSize = 16.sp,
+            fontWeight = FontWeight.SemiBold,
             modifier = Modifier
                 .align(Alignment.Start)
-                .padding(bottom = 16.dp)
+                .padding(bottom = 12.dp)
         )
 
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(
-                    color = Color.White.copy(alpha = 0.15f),
-                    shape = RoundedCornerShape(20.dp)
-                )
-                .padding(vertical = 16.dp, horizontal = 8.dp),
-            horizontalArrangement = Arrangement.SpaceEvenly,
-            verticalAlignment = Alignment.CenterVertically
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(20.dp),
+            elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+            colors = CardDefaults.cardColors(containerColor = Color.White)
         ) {
-            moodOptions.forEach { mood ->
-                val isSelected = uiState.selectedMood == mood.label
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 16.dp, horizontal = 8.dp),
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                moodOptions.forEach { mood ->
+                    val isSelected = uiState.selectedMood == mood.label
 
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier
-                        .weight(1f)
-                        .clickable { viewModel.onMoodSelected(mood.label) }
-                        .padding(4.dp)
-                ) {
-                    Box(
-                        contentAlignment = Alignment.Center,
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
                         modifier = Modifier
-                            .size(48.dp)
-                            .background(
-                                color = if (isSelected) mood.color.copy(alpha = 0.35f) else Color.Transparent,
-                                shape = CircleShape
-                            )
-                            .border(
-                                width = if (isSelected) 2.dp else 0.dp,
-                                color = if (isSelected) mood.color else Color.Transparent,
-                                shape = CircleShape
-                            )
+                            .weight(1f)
+                            .clickable { viewModel.onMoodSelected(mood.label) }
+                            .padding(4.dp)
                     ) {
-                        Icon(
-                            imageVector = mood.icon,
-                            contentDescription = mood.label,
-                            tint = if (isSelected) mood.color else White.copy(alpha = 0.8f),
-                            modifier = Modifier.size(32.dp)
+                        Box(
+                            contentAlignment = Alignment.Center,
+                            modifier = Modifier
+                                .size(48.dp)
+                                .background(
+                                    color = if (isSelected) mood.color.copy(alpha = 0.2f) else Color(0xFFF9FAFB),
+                                    shape = CircleShape
+                                )
+                                .border(
+                                    width = if (isSelected) 2.dp else 1.dp,
+                                    color = if (isSelected) mood.color else Color(0xFFE5E7EB),
+                                    shape = CircleShape
+                                )
+                        ) {
+                            Icon(
+                                imageVector = mood.icon,
+                                contentDescription = mood.label,
+                                tint = if (isSelected) mood.color else Color(0xFF9CA3AF),
+                                modifier = Modifier.size(30.dp)
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.height(6.dp))
+
+                        Text(
+                            text = mood.label,
+                            color = if (isSelected) Color(0xFF1F2937) else Color(0xFF6B7280),
+                            fontSize = 11.sp,
+                            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
+                            textAlign = TextAlign.Center,
+                            maxLines = 1
                         )
                     }
-
-                    Spacer(modifier = Modifier.height(6.dp))
-
-                    Text(
-                        text = mood.label,
-                        color = if (isSelected) White else White.copy(alpha = 0.8f),
-                        fontSize = 11.sp,
-                        fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
-                        textAlign = TextAlign.Center,
-                        maxLines = 1
-                    )
                 }
             }
         }
 
-        Spacer(modifier = Modifier.height(32.dp))
+        Spacer(modifier = Modifier.height(24.dp))
 
         // Descricao de eventos do dia
         Text(
             text = "Descrição do dia:",
-            color = White,
-            fontSize = 18.sp,
-            fontWeight = FontWeight.Medium,
+            color = Color(0xFF2D2A32),
+            fontSize = 16.sp,
+            fontWeight = FontWeight.SemiBold,
             modifier = Modifier
                 .align(Alignment.Start)
                 .padding(bottom = 8.dp)
@@ -219,14 +222,14 @@ fun DiaryScreen(
             colors = OutlinedTextFieldDefaults.colors(
                 focusedContainerColor = Color.White,
                 unfocusedContainerColor = Color.White,
-                focusedBorderColor = Color.Transparent,
-                unfocusedBorderColor = Color.Transparent,
-                focusedTextColor = Color.Black,
-                unfocusedTextColor = Color.Black
+                focusedBorderColor = Color(0xFF8B5CF6),
+                unfocusedBorderColor = Color(0xFFE5E7EB),
+                focusedTextColor = Color(0xFF1F2937),
+                unfocusedTextColor = Color(0xFF1F2937)
             )
         )
 
-        Spacer(modifier = Modifier.height(32.dp))
+        Spacer(modifier = Modifier.height(28.dp))
 
         // Action Buttons Row (Save and Go Back)
         Row(
@@ -242,14 +245,15 @@ fun DiaryScreen(
                     .height(50.dp),
                 shape = RoundedCornerShape(25.dp),
                 colors = ButtonDefaults.outlinedButtonColors(
-                    contentColor = White
+                    containerColor = Color.White,
+                    contentColor = Color(0xFF8B5CF6)
                 ),
-                border = BorderStroke(1.dp, White)
+                border = BorderStroke(1.5.dp, Color(0xFF8B5CF6))
             ) {
                 Text(
                     text = "VOLTAR",
                     fontWeight = FontWeight.Bold,
-                    fontSize = 16.sp
+                    fontSize = 15.sp
                 )
             }
 
@@ -276,14 +280,16 @@ fun DiaryScreen(
                     .height(50.dp),
                 shape = RoundedCornerShape(25.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.White,
-                    contentColor = AzulMindUp
-                )
+                    containerColor = Color(0xFF8B5CF6),
+                    contentColor = Color.White
+                ),
+                elevation = ButtonDefaults.buttonElevation(defaultElevation = 4.dp)
             ) {
                 Text(
                     text = if (uiState.isSaving) "SALVANDO..." else "SALVAR",
                     fontWeight = FontWeight.Bold,
-                    fontSize = 16.sp
+                    fontSize = 15.sp,
+                    color = Color.White
                 )
             }
         }

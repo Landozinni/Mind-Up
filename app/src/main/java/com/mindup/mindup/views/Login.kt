@@ -1,8 +1,9 @@
 package com.mindup.mindup.views
 
-import android.util.Log
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -17,6 +18,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -44,128 +46,101 @@ fun Login(
     onCriarConta: () -> Unit
 ){
     Column(
-      modifier = Modifier.fillMaxSize().background(
-          brush = Brush.linearGradient(
-              colors = listOf(
-                  RosaMindUp,
-                  AzulMindUp,
-
-
+      modifier = Modifier
+          .fillMaxSize()
+          .background(
+              Brush.verticalGradient(
+                  listOf(
+                      Color(0xFFF9F5FF),
+                      Color.White
+                  )
               )
           )
-      ).verticalScroll(rememberScrollState())
-    )
-
-    {
+          .verticalScroll(rememberScrollState())
+          .padding(horizontal = 24.dp),
+      horizontalAlignment = Alignment.CenterHorizontally,
+      verticalArrangement = Arrangement.Center
+    ) {
         Spacer(modifier = Modifier.height(40.dp))
         Image(
             painter = painterResource(R.drawable.mindup_logo),
             contentDescription = null,
-            modifier = Modifier.size(240.dp)
+            modifier = Modifier
+                .size(200.dp)
                 .align(Alignment.CenterHorizontally),
             contentScale = ContentScale.Fit
         )
         Text(
-            text = buildAnnotatedString {
-                append("Mind Up")
-            },
-            color = White,
-            fontSize = 50.sp,
+            text = "Mind Up",
+            color = Color(0xFF8B5CF6),
+            fontSize = 48.sp,
             fontFamily = MindUpFont,
-            modifier = Modifier.fillMaxWidth().padding(20.dp),
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 12.dp),
             textAlign = TextAlign.Center,
-            letterSpacing = (0.sp)
+            letterSpacing = 0.sp
         )
         Text(
-            text = buildAnnotatedString {
-                append("Cuide da sua mente, transforme seus dias!")
-            },
-            color = White,
-            fontSize = 35.sp,
+            text = "Cuide da sua mente, transforme seus dias!",
+            color = Color(0xFF2D2A32),
+            fontSize = 24.sp,
             fontWeight = FontWeight.Bold,
-            modifier = Modifier.fillMaxWidth().padding(20.dp),
-            textAlign = TextAlign.Center
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 8.dp),
+            textAlign = TextAlign.Center,
+            lineHeight = 32.sp
         )
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(32.dp))
         Button(
             onClick = {
                 onEntrar()
-
             },
             modifier = Modifier
                 .fillMaxWidth()
-                .height(60.dp)
-                .padding(horizontal = 30.dp),
-            shape = RoundedCornerShape(30.dp),
+                .height(56.dp)
+                .padding(horizontal = 16.dp),
+            shape = RoundedCornerShape(28.dp),
             colors = ButtonDefaults.buttonColors(
-                containerColor = Color.Transparent
+                containerColor = Color(0xFF8B5CF6)
             ),
-            contentPadding = PaddingValues()
+            elevation = ButtonDefaults.buttonElevation(defaultElevation = 4.dp)
         ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(
-                        brush = Brush.horizontalGradient(
-                            colors = listOf(
-                                AzulMindUp,
-                                RosaMindUp
-                            )
-                        ),
-                        shape = RoundedCornerShape(30.dp)
-                    ),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = "Entrar",
-                    color = Color.White,
-                    fontSize = 22.sp,
-                    fontWeight = FontWeight.Bold,
-
-                )
-
-
-                }
-            }
-        Spacer(modifier = Modifier.height(20.dp))
-        Button(
+            Text(
+                text = "Entrar",
+                color = Color.White,
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold
+            )
+        }
+        Spacer(modifier = Modifier.height(16.dp))
+        OutlinedButton(
             onClick = {
                 onCriarConta()
             },
             modifier = Modifier
                 .fillMaxWidth()
-                .height(60.dp)
-                .padding(horizontal = 30.dp),
-            shape = RoundedCornerShape(30.dp),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = Color.Transparent
+                .height(56.dp)
+                .padding(horizontal = 16.dp),
+            shape = RoundedCornerShape(28.dp),
+            colors = ButtonDefaults.outlinedButtonColors(
+                containerColor = Color.White,
+                contentColor = Color(0xFF8B5CF6)
             ),
-            contentPadding = PaddingValues()
+            border = androidx.compose.foundation.BorderStroke(2.dp, Color(0xFF8B5CF6))
         ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(
-                        brush = Brush.horizontalGradient(
-                            colors = listOf(
-                                White,
-                                White
-                            )
-                        ),
-                        shape = RoundedCornerShape(30.dp)
-                    ),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = "Criar Conta",
-                    color = RoxoMindUp,
-                    fontSize = 22.sp,
-                    fontWeight = FontWeight.Bold
-                )
-            }
+            Text(
+                text = "Criar Conta",
+                color = Color(0xFF8B5CF6),
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold
+            )
         }
-        }
+        Spacer(modifier = Modifier.height(40.dp))
     }
+}
 
 
 

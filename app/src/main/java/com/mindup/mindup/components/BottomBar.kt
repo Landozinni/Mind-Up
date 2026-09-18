@@ -20,8 +20,8 @@ import com.mindup.mindup.navigation.Routes
 
 @Composable
 fun BottomBar(
-    navController: NavController,
-    currentRoute: String
+    navController: NavController? = null,
+    currentRoute: String = Routes.INICIO
 ) {
 
     NavigationBar(
@@ -35,7 +35,7 @@ fun BottomBar(
             selected = currentRoute == Routes.INICIO,
 
             onClick = {
-                navController.navigate(Routes.INICIO) {
+                navController?.navigate(Routes.INICIO) {
                     launchSingleTop = true
                 }
             },
@@ -58,7 +58,7 @@ fun BottomBar(
             selected = currentRoute == Routes.METAS,
 
             onClick = {
-                navController.navigate(Routes.METAS) {
+                navController?.navigate(Routes.METAS) {
                     launchSingleTop = true
                 }
             },
@@ -78,10 +78,10 @@ fun BottomBar(
 
         // MINDUP
         NavigationBarItem(
-            selected = currentRoute == Routes.MINDUP,
+            selected = currentRoute == Routes.MINDUP || currentRoute == Routes.DIARIO,
 
             onClick = {
-                navController.navigate(Routes.MINDUP) {
+                navController?.navigate(Routes.DIARIO) {
                     launchSingleTop = true
                 }
             },
@@ -104,7 +104,7 @@ fun BottomBar(
             selected = currentRoute == Routes.RELATORIOS,
 
             onClick = {
-                navController.navigate(Routes.RELATORIOS) {
+                navController?.navigate(Routes.RELATORIOS) {
                     launchSingleTop = true
                 }
             },
@@ -127,7 +127,7 @@ fun BottomBar(
             selected = currentRoute == Routes.PERFIL,
 
             onClick = {
-                navController.navigate(Routes.PERFIL) {
+                navController?.navigate(Routes.PERFIL) {
                     launchSingleTop = true
                 }
             },
