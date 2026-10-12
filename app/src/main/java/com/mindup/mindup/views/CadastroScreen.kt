@@ -49,6 +49,7 @@ import com.mindup.mindup.ui.theme.White
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalInspectionMode
 import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
 import java.text.SimpleDateFormat
@@ -82,7 +83,8 @@ fun dataNascimentoValida(data: String): Boolean {
     var senha by remember { mutableStateOf("") }
     var mostrarSenha by remember { mutableStateOf(false) }
 
-    val auth = remember { FirebaseAuth.getInstance() }
+    val isPreview = LocalInspectionMode.current
+    val auth = remember { if (isPreview) null else FirebaseAuth.getInstance() }
 
     val context = LocalContext.current
 
@@ -367,8 +369,8 @@ fun dataNascimentoValida(data: String): Boolean {
                         return@Button
                     }
 
-                    auth.createUserWithEmailAndPassword(email, senha)
-                        .addOnCompleteListener { task ->
+                    auth?.createUserWithEmailAndPassword(email, senha)
+                        ?.addOnCompleteListener { task ->
 
                             if (task.isSuccessful) {
 
