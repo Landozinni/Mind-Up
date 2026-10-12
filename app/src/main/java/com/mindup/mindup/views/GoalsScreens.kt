@@ -27,23 +27,29 @@ import com.mindup.mindup.MindUpApplication
 import com.mindup.mindup.viewmodel.GoalViewModel
 import com.mindup.mindup.viewmodel.GoalViewModelFactory
 
+import kotlinx.coroutines.flow.flowOf
+
 import com.mindup.mindup.navigation.Routes
 
 @Composable
 fun GoalsScreen(
-    bottomBar: @Composable () -> Unit = { BottomBar(currentRoute = Routes.METAS) }
+    bottomBar: @Composable () -> Unit = { BottomBar(currentRoute = Routes.METAS) },
+    viewModel: GoalViewModel? = null
 ) {
 
-    val application =
-        LocalContext.current.applicationContext as MindUpApplication
+    // Safely cast applicationContext to MindUpApplication to support Compose Previews
+    val application = LocalContext.current.applicationContext as? MindUpApplication
 
-    val factory = remember {
-        GoalViewModelFactory(application.container.goalRepository)
+    val activeViewModel: GoalViewModel? = viewModel ?: if (application != null) {
+        val factory = remember(application) {
+            GoalViewModelFactory(application.container.goalRepository)
+        }
+        viewModel(factory = factory)
+    } else {
+        null
     }
 
-    val viewModel: GoalViewModel = viewModel(factory = factory)
-
-    val goals by viewModel.goals.collectAsState(initial = emptyList())
+    val goals by (activeViewModel?.goals ?: flowOf(emptyList())).collectAsState(initial = emptyList())
 
     var showDialog by remember {
         mutableStateOf(false)
@@ -58,7 +64,7 @@ fun GoalsScreen(
 
             onSave = { goal ->
 
-                viewModel.insertGoal(goal)
+                activeViewModel?.insertGoal(goal)
 
                 showDialog = false
 
