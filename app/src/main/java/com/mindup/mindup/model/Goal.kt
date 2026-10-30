@@ -17,5 +17,10 @@ data class Goal(
 
     val progress: Float = 0f,
 
-    val progressText: String = "0 de 0 dias"
+    val progressText: String = "0 de 0",
+    val category: String = "Pessoal",
+    val targetValue: Int = 1,
+    val currentValue: Int = 0,
+    val dueDate: String = "",
+    val frequency: String = ""
 )

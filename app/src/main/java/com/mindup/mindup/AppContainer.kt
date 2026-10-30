@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import com.mindup.mindup.data.database.AppDatabase
 import com.mindup.mindup.data.repository.GoalRepository
+import com.mindup.mindup.data.database.MIGRATION_1_2
 
 class AppContainer(context: Context) {
 
@@ -11,7 +12,7 @@ class AppContainer(context: Context) {
         context,
         AppDatabase::class.java,
         "mindup_database"
-    ).build()
+    ).addMigrations(MIGRATION_1_2).build()
 
     val goalRepository = GoalRepository(database.goalDao())
 
