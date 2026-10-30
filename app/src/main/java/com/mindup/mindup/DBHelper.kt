@@ -1,3 +1,4 @@
+
 package com.mindup.mindup
 
 import android.content.ContentValues
@@ -14,6 +15,12 @@ sealed class AuthResult {
     object UserNotFound : AuthResult()
     object WrongPassword : AuthResult()
     object Error : AuthResult()
+}
+
+enum class DiarySaveResult {
+    SUCCESS,
+    ALREADY_EXISTS,
+    ERROR
 }
 
 class DBHelper(context: Context) :
@@ -59,7 +66,11 @@ class DBHelper(context: Context) :
         )
     }
 
-    override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
+    override fun onUpgrade(
+        db: SQLiteDatabase,
+        oldVersion: Int,
+        newVersion: Int
+    ) {
         if (oldVersion < 2) {
             db.execSQL(
                 """
@@ -72,6 +83,7 @@ class DBHelper(context: Context) :
                 """.trimIndent()
             )
         }
+
         if (oldVersion < 3) {
             db.execSQL(
                 """
@@ -111,7 +123,11 @@ class DBHelper(context: Context) :
             return AuthResult.EmptyFields
         }
 
-        if (!android.util.Patterns.EMAIL_ADDRESS.matcher(emailLimpo).matches()) {
+        if (
+            !android.util.Patterns.EMAIL_ADDRESS
+                .matcher(emailLimpo)
+                .matches()
+        ) {
             return AuthResult.InvalidEmail
         }
 
@@ -126,8 +142,9 @@ class DBHelper(context: Context) :
             arrayOf(emailLimpo)
         )
 
-        val exists = cursor.moveToFirst()
-        cursor.close()
+        val exists = cursor.use {
+            it.moveToFirst()
+        }
 
         if (exists) {
             return AuthResult.EmailExists
@@ -149,7 +166,10 @@ class DBHelper(context: Context) :
         }
     }
 
-    fun login(email: String, senha: String): AuthResult {
+    fun login(
+        email: String,
+        senha: String
+    ): AuthResult {
 
         val emailLimpo = email.trim()
         val senhaLimpa = senha.trim()
@@ -180,29 +200,57 @@ class DBHelper(context: Context) :
         }
     }
 
-    fun salvarEntradaDiario(humor: String, descricao: String): Boolean {
+    fun salvarEntradaDiario(
+        humor: String,
+        descricao: String
+    ): DiarySaveResult {
+
         val humorLimpo = humor.trim()
         val descricaoLimpa = descricao.trim()
 
-        val db = writableDatabase
-        db.execSQL(
-            """
-            CREATE TABLE IF NOT EXISTS diario (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                humor TEXT,
-                descricao TEXT,
-                data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-            )
-            """.trimIndent()
-        )
-
-        val values = ContentValues().apply {
-            put("humor", humorLimpo)
-            put("descricao", descricaoLimpa)
+        if (humorLimpo.isEmpty() || descricaoLimpa.isEmpty()) {
+            return DiarySaveResult.ERROR
         }
 
-        val result = db.insert("diario", null, values)
-        return result != -1L
+        val db = writableDatabase
+
+        return try {
+            db.beginTransaction()
+
+            val cursor = db.rawQuery("SELECT id FROM diario LIMIT 1", null)
+            val jaExiste = cursor.use {
+                it.moveToFirst()
+            }
+
+            if (jaExiste) {
+                DiarySaveResult.ALREADY_EXISTS
+            } else {
+                val values = ContentValues().apply {
+                    put("humor", humorLimpo)
+                    put("descricao", descricaoLimpa)
+                }
+
+                val id = db.insert("diario", null, values)
+
+                if (id != -1L) {
+                    db.setTransactionSuccessful()
+                    DiarySaveResult.SUCCESS
+                } else {
+                    DiarySaveResult.ERROR
+                }
+            }
+        } catch (e: Exception) {
+            DiarySaveResult.ERROR
+        } finally {
+            if (db.inTransaction()) {
+                db.endTransaction()
+            }
+        }
+    }
+
+    fun possuiEntradaDiario(): Boolean {
+        val cursor = readableDatabase.rawQuery("SELECT id FROM diario LIMIT 1", null)
+        return cursor.use { it.moveToFirst() }
     }
 
     fun salvarResultadoDass21(
@@ -213,21 +261,8 @@ class DBHelper(context: Context) :
         estresseScore: Int,
         estresseClassificacao: String
     ): Boolean {
+
         val db = writableDatabase
-        db.execSQL(
-            """
-            CREATE TABLE IF NOT EXISTS dass21_resultados (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                depressao_score INTEGER,
-                depressao_classificacao TEXT,
-                ansiedade_score INTEGER,
-                ansiedade_classificacao TEXT,
-                estresse_score INTEGER,
-                estresse_classificacao TEXT,
-                data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-            )
-            """.trimIndent()
-        )
 
         val values = ContentValues().apply {
             put("depressao_score", depressaoScore)
@@ -238,7 +273,10 @@ class DBHelper(context: Context) :
             put("estresse_classificacao", estresseClassificacao)
         }
 
-        val result = db.insert("dass21_resultados", null, values)
-        return result != -1L
+        return try {
+            db.insert("dass21_resultados", null, values) != -1L
+        } catch (e: Exception) {
+            false
+        }
     }
 }

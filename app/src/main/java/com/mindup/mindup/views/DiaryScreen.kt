@@ -76,6 +76,10 @@ fun DiaryScreen(
     val context = LocalContext.current
     val db = remember { DBHelper(context) }
 
+    LaunchedEffect(db) {
+        viewModel.loadDiaryStatus(db)
+    }
+
     LaunchedEffect(uiState.errorMessage) {
         uiState.errorMessage?.let { msg ->
             Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
@@ -122,6 +126,23 @@ fun DiaryScreen(
 
         Spacer(modifier = Modifier.height(24.dp))
 
+        if (uiState.diaryAlreadyExists) {
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(containerColor = Color(0xFFF1ECFF)),
+                shape = RoundedCornerShape(16.dp)
+            ) {
+                Text(
+                    text = "Já existe um diário cadastrado. O limite é de um diário.",
+                    modifier = Modifier.padding(16.dp),
+                    color = Color(0xFF5B3A9E),
+                    textAlign = TextAlign.Center,
+                    fontWeight = FontWeight.SemiBold
+                )
+            }
+            Spacer(modifier = Modifier.height(20.dp))
+        }
+
         // Seletor de sentimentos (Mood Selector)
         Text(
             text = "Selecione o seu humor:",
@@ -153,7 +174,7 @@ fun DiaryScreen(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         modifier = Modifier
                             .weight(1f)
-                            .clickable { viewModel.onMoodSelected(mood.label) }
+                            .clickable(enabled = !uiState.diaryAlreadyExists) { viewModel.onMoodSelected(mood.label) }
                             .padding(4.dp)
                     ) {
                         Box(
@@ -209,6 +230,7 @@ fun DiaryScreen(
         OutlinedTextField(
             value = uiState.notes,
             onValueChange = { viewModel.onNotesChanged(it) },
+            enabled = !uiState.diaryAlreadyExists,
             placeholder = {
                 Text(
                     text = "Como se sente hoje? Escreva sobre o seu dia...",
@@ -274,7 +296,7 @@ fun DiaryScreen(
                         }
                     )
                 },
-                enabled = !uiState.isSaving,
+                enabled = !uiState.isSaving && !uiState.diaryAlreadyExists,
                 modifier = Modifier
                     .weight(1f)
                     .height(50.dp),
@@ -286,7 +308,11 @@ fun DiaryScreen(
                 elevation = ButtonDefaults.buttonElevation(defaultElevation = 4.dp)
             ) {
                 Text(
-                    text = if (uiState.isSaving) "SALVANDO..." else "SALVAR",
+                    text = when {
+                        uiState.isSaving -> "SALVANDO..."
+                        uiState.diaryAlreadyExists -> "DIÁRIO CADASTRADO"
+                        else -> "SALVAR"
+                    },
                     fontWeight = FontWeight.Bold,
                     fontSize = 15.sp,
                     color = Color.White
