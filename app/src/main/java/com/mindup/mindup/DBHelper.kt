@@ -5,6 +5,7 @@ import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
+import com.mindup.mindup.model.DiaryEntry
 
 sealed class AuthResult {
     object Success : AuthResult()
@@ -212,12 +213,15 @@ class DBHelper(context: Context) :
             return DiarySaveResult.ERROR
         }
 
-        val db = writableDatabase
+        val db = runCatching { writableDatabase }.getOrNull() ?: return DiarySaveResult.ERROR
 
         return try {
             db.beginTransaction()
 
-            val cursor = db.rawQuery("SELECT id FROM diario LIMIT 1", null)
+            val cursor = db.rawQuery(
+                "SELECT id FROM diario WHERE date(data_criacao, 'localtime') = date('now', 'localtime') LIMIT 1",
+                null
+            )
             val jaExiste = cursor.use {
                 it.moveToFirst()
             }
@@ -249,8 +253,38 @@ class DBHelper(context: Context) :
     }
 
     fun possuiEntradaDiario(): Boolean {
-        val cursor = readableDatabase.rawQuery("SELECT id FROM diario LIMIT 1", null)
+        val cursor = readableDatabase.rawQuery(
+            "SELECT id FROM diario WHERE date(data_criacao, 'localtime') = date('now', 'localtime') LIMIT 1",
+            null
+        )
         return cursor.use { it.moveToFirst() }
+    }
+
+    fun obterEntradaDiarioHoje(): DiaryEntry? = obterEntradasDiario(
+        "WHERE date(data_criacao, 'localtime') = date('now', 'localtime')"
+    ).firstOrNull()
+
+    fun obterHistoricoDiario(): List<DiaryEntry> = obterEntradasDiario()
+
+    private fun obterEntradasDiario(filtro: String = ""): List<DiaryEntry> {
+        val cursor = readableDatabase.rawQuery(
+            "SELECT id, humor, descricao, strftime('%Y-%m-%d %H:%M', data_criacao, 'localtime') FROM diario $filtro ORDER BY datetime(data_criacao) DESC, id DESC",
+            null
+        )
+        return cursor.use { result ->
+            buildList {
+                while (result.moveToNext()) {
+                    add(
+                        DiaryEntry(
+                            id = result.getLong(0),
+                            mood = result.getString(1).orEmpty(),
+                            description = result.getString(2).orEmpty(),
+                            createdAt = result.getString(3).orEmpty()
+                        )
+                    )
+                }
+            }
+        }
     }
 
     fun salvarResultadoDass21(

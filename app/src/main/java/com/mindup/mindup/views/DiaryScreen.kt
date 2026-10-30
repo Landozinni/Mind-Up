@@ -34,6 +34,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mindup.mindup.DBHelper
 import com.mindup.mindup.ui.theme.AzulMindUp
 import com.mindup.mindup.ui.theme.MindUpFont
@@ -71,7 +72,7 @@ private data class MoodItem(
 fun DiaryScreen(
     onVoltar: () -> Unit = {},
     onNavegarParaDass: () -> Unit = {},
-    viewModel: DiaryViewModel = remember { DiaryViewModel() }
+    viewModel: DiaryViewModel = viewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val context = LocalContext.current
@@ -120,6 +121,13 @@ fun DiaryScreen(
 
         Spacer(modifier = Modifier.height(24.dp))
 
+        if (uiState.isLoading) {
+            CircularProgressIndicator(
+                modifier = Modifier.padding(bottom = 16.dp),
+                color = MaterialTheme.colorScheme.primary
+            )
+        }
+
         if (uiState.diaryAlreadyExists) {
             Card(
                 modifier = Modifier.fillMaxWidth(),
@@ -127,7 +135,7 @@ fun DiaryScreen(
                 shape = RoundedCornerShape(16.dp)
             ) {
                 Text(
-                    text = "Já existe um diário cadastrado. O limite é de um diário.",
+                    text = "Você já registrou seu dia. Amanhã poderá fazer uma nova entrada.",
                     modifier = Modifier.padding(16.dp),
                     color = MaterialTheme.colorScheme.onSurface,
                     textAlign = TextAlign.Center,
@@ -168,7 +176,7 @@ fun DiaryScreen(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         modifier = Modifier
                             .weight(1f)
-                            .clickable(enabled = !uiState.diaryAlreadyExists) { viewModel.onMoodSelected(mood.label) }
+                            .clickable(enabled = !uiState.isLoading && !uiState.diaryAlreadyExists) { viewModel.onMoodSelected(mood.label) }
                             .padding(4.dp)
                     ) {
                         Box(
@@ -224,7 +232,7 @@ fun DiaryScreen(
         OutlinedTextField(
             value = uiState.notes,
             onValueChange = { viewModel.onNotesChanged(it) },
-            enabled = !uiState.diaryAlreadyExists,
+            enabled = !uiState.isLoading && !uiState.diaryAlreadyExists,
             placeholder = {
                 Text(
                     text = "Como se sente hoje? Escreva sobre o seu dia...",
@@ -290,7 +298,7 @@ fun DiaryScreen(
                         }
                     )
                 },
-                enabled = !uiState.isSaving && !uiState.diaryAlreadyExists,
+                enabled = !uiState.isLoading && !uiState.isSaving && !uiState.diaryAlreadyExists,
                 modifier = Modifier
                     .weight(1f)
                     .height(50.dp),
@@ -304,13 +312,44 @@ fun DiaryScreen(
                 Text(
                     text = when {
                         uiState.isSaving -> "SALVANDO..."
-                        uiState.diaryAlreadyExists -> "DIÁRIO CADASTRADO"
+                        uiState.diaryAlreadyExists -> "JÁ REGISTRADO HOJE"
                         else -> "SALVAR"
                     },
                     fontWeight = FontWeight.Bold,
                     fontSize = 15.sp,
                     color = Color.White
                 )
+            }
+        }
+
+        val previousEntries = uiState.history.filter { it.id != uiState.todayEntry?.id }
+        if (previousEntries.isNotEmpty()) {
+            Spacer(Modifier.height(32.dp))
+            Text(
+                text = "SEU HISTÓRICO",
+                color = MaterialTheme.colorScheme.onSurface,
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.fillMaxWidth()
+            )
+            Spacer(Modifier.height(12.dp))
+            previousEntries.forEach { entry ->
+                Card(
+                    modifier = Modifier.fillMaxWidth().padding(bottom = 12.dp),
+                    shape = RoundedCornerShape(16.dp),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+                ) {
+                    Column(Modifier.padding(16.dp)) {
+                        Text(
+                            text = "${entry.mood.replaceFirstChar { it.uppercase() }} · ${entry.createdAt.take(10)}",
+                            style = MaterialTheme.typography.labelLarge,
+                            color = MaterialTheme.colorScheme.primary,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                        Spacer(Modifier.height(8.dp))
+                        Text(entry.description, color = MaterialTheme.colorScheme.onSurface)
+                    }
+                }
             }
         }
     }

@@ -1,8 +1,13 @@
 package com.mindup.mindup.viewmodel
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.mindup.mindup.DBHelper
 import com.mindup.mindup.DiarySaveResult
+import com.mindup.mindup.model.DiaryEntry
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -12,7 +17,10 @@ data class DiaryUiState(
     val selectedMood: String? = null,
     val notes: String = "",
     val isSaving: Boolean = false,
+    val isLoading: Boolean = true,
     val diaryAlreadyExists: Boolean = false,
+    val todayEntry: DiaryEntry? = null,
+    val history: List<DiaryEntry> = emptyList(),
     val errorMessage: String? = null,
     val saveSuccess: Boolean = false
 )
@@ -23,8 +31,24 @@ class DiaryViewModel : ViewModel() {
     val uiState: StateFlow<DiaryUiState> = _uiState.asStateFlow()
 
     fun loadDiaryStatus(dbHelper: DBHelper) {
-        val exists = dbHelper.possuiEntradaDiario()
-        _uiState.update { it.copy(diaryAlreadyExists = exists) }
+        viewModelScope.launch {
+            val diaryData = withContext(Dispatchers.IO) {
+                runCatching {
+                    dbHelper.obterEntradaDiarioHoje() to dbHelper.obterHistoricoDiario()
+                }.getOrNull()
+            }
+            _uiState.update {
+                it.copy(
+                    isLoading = false,
+                    diaryAlreadyExists = diaryData?.first != null,
+                    todayEntry = diaryData?.first,
+                    history = diaryData?.second.orEmpty(),
+                    selectedMood = diaryData?.first?.mood,
+                    notes = diaryData?.first?.description.orEmpty(),
+                    errorMessage = if (diaryData == null) "Não foi possível carregar seu diário." else null
+                )
+            }
+        }
     }
 
     fun onMoodSelected(mood: String) {
@@ -80,41 +104,57 @@ class DiaryViewModel : ViewModel() {
             )
         }
 
-        val resultado = dbHelper.salvarEntradaDiario(
-            humor = current.selectedMood,
-            descricao = current.notes
-        )
-
-        if (resultado == DiarySaveResult.SUCCESS) {
-            _uiState.update {
-                it.copy(
-                    isSaving = false,
-                    diaryAlreadyExists = true,
-                    selectedMood = null,
-                    notes = "",
-                    saveSuccess = true,
-                    errorMessage = null
+        viewModelScope.launch {
+            val resultado = withContext(Dispatchers.IO) {
+                dbHelper.salvarEntradaDiario(
+                    humor = current.selectedMood,
+                    descricao = current.notes
                 )
             }
 
-            onSavedSuccessfully()
-        } else if (resultado == DiarySaveResult.ALREADY_EXISTS) {
-            _uiState.update {
-                it.copy(
-                    isSaving = false,
-                    diaryAlreadyExists = true,
-                    saveSuccess = false,
-                    errorMessage = "Já existe um diário cadastrado. O limite é de um diário."
+            if (resultado == DiarySaveResult.SUCCESS) {
+                val diaryData = withContext(Dispatchers.IO) {
+                    runCatching {
+                        dbHelper.obterEntradaDiarioHoje() to dbHelper.obterHistoricoDiario()
+                    }.getOrNull()
+                }
+                val todayEntry = diaryData?.first ?: DiaryEntry(
+                    id = -1,
+                    mood = current.selectedMood.orEmpty(),
+                    description = current.notes.trim(),
+                    createdAt = ""
                 )
-            }
-        } else {
-            _uiState.update {
-                it.copy(
-                    isSaving = false,
-                    saveSuccess = false,
-                    errorMessage =
-                        "Não foi possível salvar o diário. Tente novamente."
-                )
+                _uiState.update {
+                    it.copy(
+                        isSaving = false,
+                        diaryAlreadyExists = true,
+                        todayEntry = todayEntry,
+                        history = diaryData?.second.orEmpty(),
+                        selectedMood = todayEntry?.mood ?: current.selectedMood,
+                        notes = todayEntry?.description ?: current.notes.trim(),
+                        saveSuccess = true,
+                        errorMessage = null
+                    )
+                }
+                onSavedSuccessfully()
+            } else if (resultado == DiarySaveResult.ALREADY_EXISTS) {
+                loadDiaryStatus(dbHelper)
+                _uiState.update {
+                    it.copy(
+                        isSaving = false,
+                        diaryAlreadyExists = true,
+                        saveSuccess = false,
+                        errorMessage = "Você já registrou seu diário de hoje."
+                    )
+                }
+            } else {
+                _uiState.update {
+                    it.copy(
+                        isSaving = false,
+                        saveSuccess = false,
+                        errorMessage = "Não foi possível salvar o diário. Tente novamente."
+                    )
+                }
             }
         }
     }
