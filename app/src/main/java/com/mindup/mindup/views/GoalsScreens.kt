@@ -1,6 +1,12 @@
 package com.mindup.mindup.views
 
 import androidx.compose.foundation.background
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.lazy.LazyColumn
@@ -70,7 +76,7 @@ fun GoalsScreen(bottomBar: @Composable () -> Unit = { BottomBar(currentRoute = R
         .let { list -> if (filter == "Concluídas") goals.filter { status(it) == "Concluída" } else if (filter == "Atrasadas") goals.filter { status(it) == "Atrasada" } else list }
 
     Scaffold(bottomBar = bottomBar, floatingActionButton = {
-        FloatingActionButton(onClick = { creating = true }, containerColor = Color(0xFF7C55D9), contentColor = Color.White) { Icon(Icons.Default.Add, contentDescription = "Criar nova meta") }
+        FloatingActionButton(onClick = { creating = true }, containerColor = MaterialTheme.colorScheme.primary, contentColor = MaterialTheme.colorScheme.onPrimary) { Icon(Icons.Default.Add, contentDescription = "Criar nova meta") }
     }) { padding ->
         Column(Modifier.fillMaxSize().background(MindUpBackgroundBrush()).padding(padding).padding(horizontal = 20.dp)) {
             Spacer(Modifier.height(20.dp))
@@ -83,25 +89,31 @@ fun GoalsScreen(bottomBar: @Composable () -> Unit = { BottomBar(currentRoute = R
                     FilterChip(selected = filter == option, onClick = { filter = option }, label = { Text(option, maxLines = 1) })
                 }
             }
-            if (message != null) {
+            AnimatedVisibility(
+                visible = message != null,
+                enter = fadeIn(tween(180)) + expandVertically(tween(180)),
+                exit = fadeOut(tween(140)) + shrinkVertically(tween(140))
+            ) {
+                if (message != null) {
                 Card(Modifier.fillMaxWidth().padding(bottom = 8.dp), colors = CardDefaults.cardColors(containerColor = if (message!!.startsWith("Não")) Color(0xFFFFE9E7) else Color(0xFFEAF7EF)), shape = RoundedCornerShape(12.dp)) {
                     Row(Modifier.padding(12.dp), verticalAlignment = Alignment.CenterVertically) {
                         Text(message!!, Modifier.weight(1f), color = Color(0xFF303039))
                         TextButton(onClick = { activeViewModel?.clearMessage() }) { Text("OK") }
                     }
                 }
+                }
             }
             LazyColumn(Modifier.fillMaxSize()) {
                 if (goalsState == null) item {
                     Box(Modifier.fillMaxWidth().padding(top = 56.dp), contentAlignment = Alignment.Center) {
                         CircularProgressIndicator(color = Color(0xFF7C55D9))
-                        Text("Carregando suas metas…", Modifier.padding(top = 76.dp), color = Color(0xFF625D68))
+                        Text("Carregando suas metas…", Modifier.padding(top = 76.dp), color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                 } else if (goals.isEmpty()) item {
                     Column(Modifier.fillMaxWidth().padding(top = 56.dp), horizontalAlignment = Alignment.CenterHorizontally) {
                         Text("🌱", fontSize = 56.sp)
                         Spacer(Modifier.height(12.dp))
-                        Text("Sua próxima conquista começa aqui", fontSize = 20.sp, fontWeight = FontWeight.Bold, color = Color(0xFF302A39))
+                        Text("Sua próxima conquista começa aqui", fontSize = 20.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
                         Spacer(Modifier.height(8.dp))
                         Text("Crie sua primeira meta e acompanhe cada passo.", color = MaterialTheme.colorScheme.onSurfaceVariant)
                         Spacer(Modifier.height(18.dp))
@@ -114,7 +126,11 @@ fun GoalsScreen(bottomBar: @Composable () -> Unit = { BottomBar(currentRoute = R
                         val target = goal.targetValue.coerceAtLeast(1)
                         val current = value.coerceIn(0, target)
                         activeViewModel?.updateGoal(goal.copy(currentValue = current, progress = current.toFloat() / target, progressText = "$current de $target"))
-                    })
+                    }, modifier = Modifier.animateItem(
+                        fadeInSpec = tween(180),
+                        fadeOutSpec = tween(140),
+                        placementSpec = tween(220)
+                    ))
                 }
                 item { Spacer(Modifier.height(88.dp)) }
             }

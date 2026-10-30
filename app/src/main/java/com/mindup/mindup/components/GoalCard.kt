@@ -1,6 +1,8 @@
 package com.mindup.mindup.components
 
 import androidx.compose.foundation.background
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -24,13 +26,15 @@ fun GoalCard(
     status: String,
     onEdit: () -> Unit,
     onDelete: () -> Unit,
-    onProgress: (Int) -> Unit
+    onProgress: (Int) -> Unit,
+    modifier: Modifier = Modifier
 ) {
-    val ratio = (goal.currentValue.toFloat() / goal.targetValue.coerceAtLeast(1)).coerceIn(0f, 1f)
-    Card(Modifier.fillMaxWidth().padding(vertical = 7.dp), shape = RoundedCornerShape(22.dp), elevation = CardDefaults.cardElevation(3.dp), colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)) {
+    val targetRatio = (goal.currentValue.toFloat() / goal.targetValue.coerceAtLeast(1)).coerceIn(0f, 1f)
+    val ratio = animateFloatAsState(targetRatio, tween(320), label = "goal-progress").value
+    Card(modifier.fillMaxWidth().padding(vertical = 7.dp), shape = RoundedCornerShape(22.dp), elevation = CardDefaults.cardElevation(3.dp), colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)) {
         Column(Modifier.padding(18.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Box(Modifier.size(48.dp).clip(CircleShape).background(Color(0xFFF4F0FF)), contentAlignment = Alignment.Center) { Text(goal.emoji, fontSize = 25.sp) }
+                Box(Modifier.size(48.dp).clip(CircleShape).background(MaterialTheme.colorScheme.primaryContainer), contentAlignment = Alignment.Center) { Text(goal.emoji, fontSize = 25.sp) }
                 Spacer(Modifier.width(12.dp))
                 Column(Modifier.weight(1f)) {
                     Text(goal.title, fontSize = 18.sp, fontWeight = FontWeight.Bold)
@@ -48,7 +52,7 @@ fun GoalCard(
                 Text("${(ratio * 100).toInt()}%", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
             }
             Spacer(Modifier.height(6.dp))
-            LinearProgressIndicator(progress = { ratio }, modifier = Modifier.fillMaxWidth().height(10.dp).clip(RoundedCornerShape(50)).semantics { progressBarRangeInfo = ProgressBarRangeInfo(ratio, 0f..1f) }, color = Color(0xFF7C55D9), trackColor = Color(0xFFE9E3F3))
+            LinearProgressIndicator(progress = { ratio }, modifier = Modifier.fillMaxWidth().height(10.dp).clip(RoundedCornerShape(50)).semantics { progressBarRangeInfo = ProgressBarRangeInfo(ratio, 0f..1f) }, color = MaterialTheme.colorScheme.primary, trackColor = MaterialTheme.colorScheme.surfaceVariant)
             Spacer(Modifier.height(8.dp))
             val details = listOfNotNull(goal.dueDate.takeIf { it.isNotBlank() }?.let { "Prazo: $it" }, goal.frequency.takeIf { it.isNotBlank() }?.let { "Frequência: $it" }).joinToString("  ·  ")
             if (details.isNotBlank()) Text(details, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)

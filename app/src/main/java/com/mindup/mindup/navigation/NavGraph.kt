@@ -1,6 +1,14 @@
 package com.mindup.mindup.navigation
 
+import android.provider.Settings
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -11,6 +19,7 @@ import com.mindup.mindup.views.Login
 import com.mindup.mindup.views.LoginScreen
 import com.mindup.mindup.views.DiaryScreen
 import com.mindup.mindup.views.PasswordReset
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -46,6 +55,13 @@ fun NavGraph(
     onDarkThemeChange: (Boolean) -> Unit = {}
 ) {
 
+    val context = LocalContext.current
+    val animationsEnabled = remember {
+        runCatching {
+            Settings.Global.getFloat(context.contentResolver, Settings.Global.ANIMATOR_DURATION_SCALE, 1f) > 0f
+        }.getOrDefault(true)
+    }
+
     val navController = rememberNavController()
 
     Surface(
@@ -54,7 +70,20 @@ fun NavGraph(
     ) {
         NavHost(
             navController = navController,
-            startDestination = Routes.LOGIN
+            startDestination = Routes.LOGIN,
+            enterTransition = {
+                if (animationsEnabled) fadeIn(tween(220)) + slideInHorizontally(tween(220)) { it / 14 }
+                else fadeIn(tween(0))
+            },
+            exitTransition = { if (animationsEnabled) fadeOut(tween(160)) else fadeOut(tween(0)) },
+            popEnterTransition = {
+                if (animationsEnabled) fadeIn(tween(220)) + slideInHorizontally(tween(220)) { -it / 14 }
+                else fadeIn(tween(0))
+            },
+            popExitTransition = {
+                if (animationsEnabled) fadeOut(tween(160)) + slideOutHorizontally(tween(160)) { it / 18 }
+                else fadeOut(tween(0))
+            }
         ) {
 
         // =========================
