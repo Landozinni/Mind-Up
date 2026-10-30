@@ -20,6 +20,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -38,6 +39,7 @@ import com.mindup.mindup.ui.theme.AzulMindUp
 import com.mindup.mindup.ui.theme.RosaMindUp
 import com.mindup.mindup.ui.theme.RoxoMindUp
 import com.mindup.mindup.ui.theme.White
+import com.mindup.mindup.ui.theme.MindUpBackgroundBrush
 import com.mindup.mindup.ui.theme.MindUpFont
 
 @Composable
@@ -48,14 +50,7 @@ fun Login(
     Column(
       modifier = Modifier
           .fillMaxSize()
-          .background(
-              Brush.verticalGradient(
-                  listOf(
-                      Color(0xFFF9F5FF),
-                      Color.White
-                  )
-              )
-          )
+          .background(MindUpBackgroundBrush())
           .verticalScroll(rememberScrollState())
           .padding(horizontal = 24.dp),
       horizontalAlignment = Alignment.CenterHorizontally,
@@ -84,7 +79,7 @@ fun Login(
         )
         Text(
             text = "Cuide da sua mente, transforme seus dias!",
-            color = Color(0xFF2D2A32),
+            color = MaterialTheme.colorScheme.onSurface,
             fontSize = 24.sp,
             fontWeight = FontWeight.Bold,
             modifier = Modifier
@@ -126,7 +121,7 @@ fun Login(
                 .padding(horizontal = 16.dp),
             shape = RoundedCornerShape(28.dp),
             colors = ButtonDefaults.outlinedButtonColors(
-                containerColor = Color.White,
+                containerColor = MaterialTheme.colorScheme.surface,
                 contentColor = Color(0xFF8B5CF6)
             ),
             border = androidx.compose.foundation.BorderStroke(2.dp, Color(0xFF8B5CF6))

@@ -21,11 +21,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.mindup.mindup.ui.theme.MindUpTheme
+import com.mindup.mindup.ui.theme.MindUpBackgroundBrush
 
 // Define a paleta de cores em tons de roxo
 val PurplePrimary = Color(0xFF6B52AE)
@@ -54,20 +56,13 @@ fun HomeScreen(
     bottomBar: @Composable () -> Unit = { CustomBottomNavigation() }
 ) {
     Scaffold(
-        containerColor = Color.Transparent,
+        containerColor = MaterialTheme.colorScheme.background,
         bottomBar = bottomBar
     ) { paddingValues ->
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .background(
-                    Brush.verticalGradient(
-                        listOf(
-                            Color(0xFFF9F5FF),
-                            Color.White
-                        )
-                    )
-                )
+                .background(MindUpBackgroundBrush())
                 .padding(paddingValues)
                 .padding(horizontal = 20.dp),
             verticalArrangement = Arrangement.spacedBy(20.dp)
@@ -124,12 +119,12 @@ fun HeaderSection(userName: String) {
                 text = "Bom dia, $userName 👋",
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Bold,
-                color = TextDark
+                color = MaterialTheme.colorScheme.onSurface
             )
             Text(
                 text = "26 de abril de 2025",
                 fontSize = 12.sp,
-                color = TextMuted
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
     }
@@ -141,7 +136,7 @@ fun DailyQuoteCard() {
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(20.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White)
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {
         Column(modifier = Modifier.padding(20.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -150,7 +145,7 @@ fun DailyQuoteCard() {
                 Text(
                     text = "Frase do dia",
                     fontSize = 12.sp,
-                    color = TextMuted,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     fontWeight = FontWeight.Medium
                 )
             }
@@ -159,7 +154,7 @@ fun DailyQuoteCard() {
                 text = "“Pequenos passos diários transformam grandes objetivos.”",
                 fontSize = 16.sp,
                 fontWeight = FontWeight.SemiBold,
-                color = TextDark,
+                color = MaterialTheme.colorScheme.onSurface,
                 lineHeight = 22.sp
             )
         }
@@ -230,6 +225,7 @@ fun ActionBannerSection(onStartClick: () -> Unit = {}) {
 
 @Composable
 fun SummarySection() {
+    val isDarkTheme = MaterialTheme.colorScheme.background.luminance() < 0.5f
     val items = listOf(
         SummaryData("🔥", "5", "dias de sequência", Color(0xFFFFF2EC)),
         SummaryData("🪷", "12 min", "meditados hoje", Color(0xFFEBF3FF)),
@@ -247,7 +243,7 @@ fun SummarySection() {
                 text = "Seu resumo",
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold,
-                color = TextDark
+                color = MaterialTheme.colorScheme.onSurface
             )
             Text(
                 text = "Ver mais >",
@@ -267,7 +263,9 @@ fun SummarySection() {
                     modifier = Modifier.weight(1f),
                     shape = RoundedCornerShape(16.dp),
                     elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-                    colors = CardDefaults.cardColors(containerColor = data.containerColor)
+                    colors = CardDefaults.cardColors(
+                        containerColor = if (isDarkTheme) MaterialTheme.colorScheme.surfaceVariant else data.containerColor
+                    )
                 ) {
                     Column(
                         modifier = Modifier.padding(12.dp),
@@ -279,12 +277,12 @@ fun SummarySection() {
                             text = data.value,
                             fontSize = 16.sp,
                             fontWeight = FontWeight.Bold,
-                            color = TextDark
+                            color = MaterialTheme.colorScheme.onSurface
                         )
                         Text(
                             text = data.label,
                             fontSize = 9.sp,
-                            color = TextMuted,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
                             lineHeight = 11.sp
                         )
                     }
@@ -300,7 +298,7 @@ fun SuggestionCard() {
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(20.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White)
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {
         Row(
             modifier = Modifier
@@ -330,7 +328,7 @@ fun SuggestionCard() {
                     Text(
                         text = "Você relatou ansiedade ontem. Que tal fazer uma respiração de 3 minutos?",
                         fontSize = 11.sp,
-                        color = TextDark,
+                        color = MaterialTheme.colorScheme.onSurface,
                         lineHeight = 14.sp
                     )
                 }
@@ -358,7 +356,7 @@ fun SuggestionCard() {
 @Composable
 fun CustomBottomNavigation() {
     NavigationBar(
-        containerColor = CardBackground,
+        containerColor = MaterialTheme.colorScheme.surface,
         tonalElevation = 8.dp
     ) {
         NavigationBarItem(
@@ -377,28 +375,28 @@ fun CustomBottomNavigation() {
             onClick = { },
             icon = { Icon(Icons.Default.Place, contentDescription = "Metas") },
             label = { Text("Metas", fontSize = 10.sp) },
-            colors = NavigationBarItemDefaults.colors(unselectedIconColor = TextMuted)
+            colors = NavigationBarItemDefaults.colors(unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant)
         )
         NavigationBarItem(
             selected = false,
             onClick = { },
             icon = { Icon(Icons.Default.Star, contentDescription = "Diário") },
             label = { Text("Diário", fontSize = 10.sp) },
-            colors = NavigationBarItemDefaults.colors(unselectedIconColor = TextMuted)
+            colors = NavigationBarItemDefaults.colors(unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant)
         )
         NavigationBarItem(
             selected = false,
             onClick = { },
             icon = { Icon(Icons.Default.DateRange, contentDescription = "Relatórios") },
             label = { Text("Relatórios", fontSize = 10.sp) },
-            colors = NavigationBarItemDefaults.colors(unselectedIconColor = TextMuted)
+            colors = NavigationBarItemDefaults.colors(unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant)
         )
         NavigationBarItem(
             selected = false,
             onClick = { },
             icon = { Icon(Icons.Default.Person, contentDescription = "Perfil") },
             label = { Text("Perfil", fontSize = 10.sp) },
-            colors = NavigationBarItemDefaults.colors(unselectedIconColor = TextMuted)
+            colors = NavigationBarItemDefaults.colors(unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant)
         )
     }
 }

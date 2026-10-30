@@ -27,31 +27,31 @@ fun GoalCard(
     onProgress: (Int) -> Unit
 ) {
     val ratio = (goal.currentValue.toFloat() / goal.targetValue.coerceAtLeast(1)).coerceIn(0f, 1f)
-    Card(Modifier.fillMaxWidth().padding(vertical = 7.dp), shape = RoundedCornerShape(22.dp), elevation = CardDefaults.cardElevation(3.dp), colors = CardDefaults.cardColors(containerColor = Color.White)) {
+    Card(Modifier.fillMaxWidth().padding(vertical = 7.dp), shape = RoundedCornerShape(22.dp), elevation = CardDefaults.cardElevation(3.dp), colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)) {
         Column(Modifier.padding(18.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Box(Modifier.size(48.dp).clip(CircleShape).background(Color(0xFFF4F0FF)), contentAlignment = Alignment.Center) { Text(goal.emoji, fontSize = 25.sp) }
                 Spacer(Modifier.width(12.dp))
                 Column(Modifier.weight(1f)) {
                     Text(goal.title, fontSize = 18.sp, fontWeight = FontWeight.Bold)
-                    Text("${goal.category} • $status", color = if (status == "Atrasada") Color(0xFF9A3412) else Color(0xFF51456A), style = MaterialTheme.typography.bodySmall)
+                    Text("${goal.category} • $status", color = if (status == "Atrasada") Color(0xFFFFB4AB) else MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodySmall)
                 }
                 TextButton(onClick = onEdit) { Text("Editar") }
                 TextButton(onClick = onDelete, colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.error)) { Text("Excluir") }
             }
             if (goal.description.isNotBlank()) {
-                Spacer(Modifier.height(10.dp)); Text(goal.description, color = Color(0xFF55515B))
+                Spacer(Modifier.height(10.dp)); Text(goal.description, color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
             Spacer(Modifier.height(12.dp))
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                 Text("Progresso: ${goal.currentValue.coerceAtLeast(0)} de ${goal.targetValue.coerceAtLeast(1)}", fontWeight = FontWeight.SemiBold)
-                Text("${(ratio * 100).toInt()}%", fontWeight = FontWeight.Bold, color = Color(0xFF6541B5))
+                Text("${(ratio * 100).toInt()}%", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
             }
             Spacer(Modifier.height(6.dp))
             LinearProgressIndicator(progress = { ratio }, modifier = Modifier.fillMaxWidth().height(10.dp).clip(RoundedCornerShape(50)).semantics { progressBarRangeInfo = ProgressBarRangeInfo(ratio, 0f..1f) }, color = Color(0xFF7C55D9), trackColor = Color(0xFFE9E3F3))
             Spacer(Modifier.height(8.dp))
             val details = listOfNotNull(goal.dueDate.takeIf { it.isNotBlank() }?.let { "Prazo: $it" }, goal.frequency.takeIf { it.isNotBlank() }?.let { "Frequência: $it" }).joinToString("  ·  ")
-            if (details.isNotBlank()) Text(details, style = MaterialTheme.typography.bodySmall, color = Color(0xFF625D68))
+            if (details.isNotBlank()) Text(details, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
             Spacer(Modifier.height(8.dp))
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(if (ratio >= 1f) "Meta concluída! 🎉" else "Atualizar progresso", modifier = Modifier.weight(1f), fontWeight = if (ratio >= 1f) FontWeight.SemiBold else FontWeight.Normal)

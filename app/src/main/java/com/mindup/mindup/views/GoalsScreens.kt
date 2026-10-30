@@ -26,6 +26,7 @@ import com.mindup.mindup.components.GoalCard
 import com.mindup.mindup.components.GoalDialog
 import com.mindup.mindup.model.Goal
 import com.mindup.mindup.navigation.Routes
+import com.mindup.mindup.ui.theme.MindUpBackgroundBrush
 import com.mindup.mindup.viewmodel.GoalViewModel
 import com.mindup.mindup.viewmodel.GoalViewModelFactory
 import kotlinx.coroutines.flow.flowOf
@@ -71,11 +72,11 @@ fun GoalsScreen(bottomBar: @Composable () -> Unit = { BottomBar(currentRoute = R
     Scaffold(bottomBar = bottomBar, floatingActionButton = {
         FloatingActionButton(onClick = { creating = true }, containerColor = Color(0xFF7C55D9), contentColor = Color.White) { Icon(Icons.Default.Add, contentDescription = "Criar nova meta") }
     }) { padding ->
-        Column(Modifier.fillMaxSize().background(Brush.verticalGradient(listOf(Color(0xFFF9F5FF), Color.White))).padding(padding).padding(horizontal = 20.dp)) {
+        Column(Modifier.fillMaxSize().background(MindUpBackgroundBrush()).padding(padding).padding(horizontal = 20.dp)) {
             Spacer(Modifier.height(20.dp))
-            Text("🎯 Metas", fontSize = 32.sp, fontWeight = FontWeight.Bold, color = Color(0xFF2D2638))
+            Text("🎯 Metas", fontSize = 32.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
             Spacer(Modifier.height(6.dp))
-            Text("Pequenos hábitos constroem grandes mudanças.", color = Color(0xFF5F5968), fontSize = 15.sp)
+            Text("Pequenos hábitos constroem grandes mudanças.", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 15.sp)
             Spacer(Modifier.height(16.dp))
             Row(Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                 filters.forEach { option ->
@@ -102,12 +103,12 @@ fun GoalsScreen(bottomBar: @Composable () -> Unit = { BottomBar(currentRoute = R
                         Spacer(Modifier.height(12.dp))
                         Text("Sua próxima conquista começa aqui", fontSize = 20.sp, fontWeight = FontWeight.Bold, color = Color(0xFF302A39))
                         Spacer(Modifier.height(8.dp))
-                        Text("Crie sua primeira meta e acompanhe cada passo.", color = Color(0xFF625D68))
+                        Text("Crie sua primeira meta e acompanhe cada passo.", color = MaterialTheme.colorScheme.onSurfaceVariant)
                         Spacer(Modifier.height(18.dp))
                         Button(onClick = { creating = true }) { Icon(Icons.Default.Add, contentDescription = null); Spacer(Modifier.width(6.dp)); Text("Criar primeira meta") }
                     }
                 } else if (visibleGoals.isEmpty()) item {
-                    Text("Nenhuma meta nesta categoria de status.", Modifier.fillMaxWidth().padding(vertical = 36.dp), color = Color(0xFF625D68))
+                    Text("Nenhuma meta nesta categoria de status.", Modifier.fillMaxWidth().padding(vertical = 36.dp), color = MaterialTheme.colorScheme.onSurfaceVariant)
                 } else items(visibleGoals, key = { it.id }) { goal ->
                     GoalCard(goal = goal, status = status(goal), onEdit = { dialogGoal = goal }, onDelete = { deleteGoal = goal }, onProgress = { value ->
                         val target = goal.targetValue.coerceAtLeast(1)

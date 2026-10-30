@@ -49,6 +49,7 @@ import com.mindup.mindup.ui.theme.MindUpFont
 import com.mindup.mindup.ui.theme.RosaMindUp
 import com.mindup.mindup.ui.theme.RoxoMindUp
 import com.mindup.mindup.ui.theme.White
+import com.mindup.mindup.ui.theme.MindUpBackgroundBrush
 import com.mindup.mindup.viewmodel.Dass21ViewModel
 
 val ratingScaleGuide = listOf(
@@ -84,12 +85,12 @@ fun Dass21Screen(
                             text = "Questionário DASS-21",
                             fontWeight = FontWeight.Bold,
                             fontSize = 18.sp,
-                            color = Color(0xFF1F2937)
+                            color = MaterialTheme.colorScheme.onSurface
                         )
                         Text(
                             text = "Avaliação da última semana",
                             fontSize = 12.sp,
-                            color = Color(0xFF6B7280)
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                 },
@@ -98,7 +99,7 @@ fun Dass21Screen(
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Voltar",
-                            tint = Color(0xFF1F2937)
+                            tint = MaterialTheme.colorScheme.onSurface
                         )
                     }
                 },
@@ -111,14 +112,14 @@ fun Dass21Screen(
                         )
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color.White
-                )
+            colors = TopAppBarDefaults.topAppBarColors(
+                containerColor = MaterialTheme.colorScheme.surface
+            )
             )
         },
         bottomBar = {
             Surface(
-                color = Color.White,
+                color = MaterialTheme.colorScheme.surface,
                 shadowElevation = 8.dp
             ) {
                 Row(
@@ -138,7 +139,7 @@ fun Dass21Screen(
                             text = "${uiState.answeredCount} de ${uiState.totalCount} respondidas",
                             fontWeight = FontWeight.Bold,
                             fontSize = 14.sp,
-                            color = Color(0xFF1F2937)
+                            color = MaterialTheme.colorScheme.onSurface
                         )
                     }
 
@@ -167,14 +168,7 @@ fun Dass21Screen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(
-                    Brush.verticalGradient(
-                        listOf(
-                            Color(0xFFF9F5FF),
-                            Color.White
-                        )
-                    )
-                )
+                .background(MindUpBackgroundBrush())
                 .padding(paddingValues)
         ) {
             // Linear progress indicator
@@ -199,7 +193,7 @@ fun Dass21Screen(
                     Card(
                         modifier = Modifier.fillMaxWidth(),
                         shape = RoundedCornerShape(16.dp),
-                        colors = CardDefaults.cardColors(containerColor = Color.White),
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
                     ) {
                         Column(
@@ -219,14 +213,14 @@ fun Dass21Screen(
                                     text = "Instruções do Teste",
                                     fontWeight = FontWeight.Bold,
                                     fontSize = 16.sp,
-                                    color = Color(0xFF1F2937)
+                                    color = MaterialTheme.colorScheme.onSurface
                                 )
                             }
                             Spacer(modifier = Modifier.height(8.dp))
                             Text(
                                 text = "Por favor, leia cada afirmação e selecione o número apropriado (0, 1, 2 ou 3) que indique o quanto ela se aplicou a você durante a última semana.",
                                 fontSize = 14.sp,
-                                color = Color(0xFF4B5563),
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 lineHeight = 20.sp
                             )
 
@@ -240,7 +234,7 @@ fun Dass21Screen(
                                         Text(
                                             text = desc,
                                             fontSize = 12.sp,
-                                            color = Color(0xFF6B7280),
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant,
                                             modifier = Modifier.padding(vertical = 2.dp)
                                         )
                                     }
@@ -296,7 +290,7 @@ fun QuestionCard(
                 shape = RoundedCornerShape(16.dp)
             ),
         shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White)
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {
         Column(
             modifier = Modifier.padding(16.dp)
@@ -338,7 +332,7 @@ fun QuestionCard(
                 text = question.text,
                 fontSize = 15.sp,
                 fontWeight = FontWeight.Medium,
-                color = Color(0xFF111827),
+                color = MaterialTheme.colorScheme.onSurface,
                 lineHeight = 22.sp
             )
 
@@ -358,7 +352,7 @@ fun QuestionCard(
                     )
 
                     val textColor by animateColorAsState(
-                        targetValue = if (isSelected) Color.White else Color(0xFF374151),
+                        targetValue = if (isSelected) Color.White else MaterialTheme.colorScheme.onSurfaceVariant,
                         label = "textColor"
                     )
 
@@ -440,12 +434,12 @@ fun Dass21ResultDialog(
                             fontSize = 22.sp,
                             fontWeight = FontWeight.Bold,
                             fontFamily = MindUpFont,
-                            color = Color(0xFF1F2937)
+                            color = MaterialTheme.colorScheme.onSurface
                         )
                         Text(
                             text = "Diagnóstico e Interpretação Clínica",
                             fontSize = 13.sp,
-                            color = Color(0xFF6B7280)
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
 
@@ -473,7 +467,7 @@ fun Dass21ResultDialog(
                 Card(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(16.dp),
-                    colors = CardDefaults.cardColors(containerColor = Color.White),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                     elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
                 ) {
                     Row(
@@ -492,7 +486,7 @@ fun Dass21ResultDialog(
                         Text(
                             text = evaluation.generalSummary,
                             fontSize = 13.sp,
-                            color = Color(0xFF374151),
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
                             lineHeight = 18.sp
                         )
                     }
@@ -555,7 +549,7 @@ fun Dass21ResultDialog(
                     ) {
                         Text(
                             text = "Refazer Teste",
-                            color = Color(0xFF4B5563),
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
                             fontWeight = FontWeight.SemiBold,
                             fontSize = 14.sp
                         )
@@ -587,7 +581,7 @@ fun SubscaleResultCard(result: SubscaleResult) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Column(
@@ -610,7 +604,7 @@ fun SubscaleResultCard(result: SubscaleResult) {
                         text = result.category.displayName,
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Color(0xFF111827)
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                 }
 
@@ -640,7 +634,7 @@ fun SubscaleResultCard(result: SubscaleResult) {
                 Text(
                     text = "Pontuação final (DASS-42 equiv.):",
                     fontSize = 12.sp,
-                    color = Color(0xFF6B7280)
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Text(
                     text = "${result.finalScore} / 42",
@@ -668,7 +662,7 @@ fun SubscaleResultCard(result: SubscaleResult) {
             Text(
                 text = result.conditionMessage,
                 fontSize = 13.sp,
-                color = Color(0xFF374151),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 lineHeight = 18.sp
             )
         }

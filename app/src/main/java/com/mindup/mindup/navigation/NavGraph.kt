@@ -11,10 +11,11 @@ import com.mindup.mindup.views.Login
 import com.mindup.mindup.views.LoginScreen
 import com.mindup.mindup.views.DiaryScreen
 import com.mindup.mindup.views.PasswordReset
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -47,10 +48,14 @@ fun NavGraph(
 
     val navController = rememberNavController()
 
-    NavHost(
-        navController = navController,
-        startDestination = Routes.LOGIN
+    Surface(
+        modifier = Modifier.fillMaxSize(),
+        color = MaterialTheme.colorScheme.background
     ) {
+        NavHost(
+            navController = navController,
+            startDestination = Routes.LOGIN
+        ) {
 
         // =========================
         // LOGIN
@@ -252,6 +257,7 @@ fun NavGraph(
                     navController.popBackStack()
                 }
             )
+        }
         }
     }
 }

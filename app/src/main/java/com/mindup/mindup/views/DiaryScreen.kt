@@ -39,6 +39,7 @@ import com.mindup.mindup.ui.theme.AzulMindUp
 import com.mindup.mindup.ui.theme.MindUpFont
 import com.mindup.mindup.ui.theme.RosaMindUp
 import com.mindup.mindup.ui.theme.White
+import com.mindup.mindup.ui.theme.MindUpBackgroundBrush
 
 import com.mindup.mindup.viewmodel.DiaryViewModel
 
@@ -98,14 +99,7 @@ fun DiaryScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(
-                Brush.verticalGradient(
-                    listOf(
-                        Color(0xFFF9F5FF),
-                        Color.White
-                    )
-                )
-            )
+            .background(MindUpBackgroundBrush())
             .verticalScroll(rememberScrollState())
             .padding(horizontal = 24.dp, vertical = 28.dp),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -116,7 +110,7 @@ fun DiaryScreen(
         // Titulo da pagina
         Text(
             text = "COMO FOI SEU DIA HOJE?",
-            color = Color(0xFF2D2A32),
+            color = MaterialTheme.colorScheme.onSurface,
             fontSize = 28.sp,
             fontFamily = MindUpFont,
             fontWeight = FontWeight.Bold,
@@ -129,13 +123,13 @@ fun DiaryScreen(
         if (uiState.diaryAlreadyExists) {
             Card(
                 modifier = Modifier.fillMaxWidth(),
-                colors = CardDefaults.cardColors(containerColor = Color(0xFFF1ECFF)),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
                 shape = RoundedCornerShape(16.dp)
             ) {
                 Text(
                     text = "Já existe um diário cadastrado. O limite é de um diário.",
                     modifier = Modifier.padding(16.dp),
-                    color = Color(0xFF5B3A9E),
+                    color = MaterialTheme.colorScheme.onSurface,
                     textAlign = TextAlign.Center,
                     fontWeight = FontWeight.SemiBold
                 )
@@ -146,7 +140,7 @@ fun DiaryScreen(
         // Seletor de sentimentos (Mood Selector)
         Text(
             text = "Selecione o seu humor:",
-            color = Color(0xFF2D2A32),
+            color = MaterialTheme.colorScheme.onSurface,
             fontSize = 16.sp,
             fontWeight = FontWeight.SemiBold,
             modifier = Modifier
@@ -158,7 +152,7 @@ fun DiaryScreen(
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(20.dp),
             elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-            colors = CardDefaults.cardColors(containerColor = Color.White)
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
         ) {
             Row(
                 modifier = Modifier
@@ -182,7 +176,7 @@ fun DiaryScreen(
                             modifier = Modifier
                                 .size(48.dp)
                                 .background(
-                                    color = if (isSelected) mood.color.copy(alpha = 0.2f) else Color(0xFFF9FAFB),
+                                    color = if (isSelected) mood.color.copy(alpha = 0.2f) else MaterialTheme.colorScheme.surfaceVariant,
                                     shape = CircleShape
                                 )
                                 .border(
@@ -203,7 +197,7 @@ fun DiaryScreen(
 
                         Text(
                             text = mood.label,
-                            color = if (isSelected) Color(0xFF1F2937) else Color(0xFF6B7280),
+                                    color = if (isSelected) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant,
                             fontSize = 11.sp,
                             fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
                             textAlign = TextAlign.Center,
@@ -219,7 +213,7 @@ fun DiaryScreen(
         // Descricao de eventos do dia
         Text(
             text = "Descrição do dia:",
-            color = Color(0xFF2D2A32),
+            color = MaterialTheme.colorScheme.onSurface,
             fontSize = 16.sp,
             fontWeight = FontWeight.SemiBold,
             modifier = Modifier
@@ -234,7 +228,7 @@ fun DiaryScreen(
             placeholder = {
                 Text(
                     text = "Como se sente hoje? Escreva sobre o seu dia...",
-                    color = Color.Gray
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             },
             modifier = Modifier
@@ -242,12 +236,12 @@ fun DiaryScreen(
                 .height(180.dp),
             shape = RoundedCornerShape(16.dp),
             colors = OutlinedTextFieldDefaults.colors(
-                focusedContainerColor = Color.White,
-                unfocusedContainerColor = Color.White,
+                focusedContainerColor = MaterialTheme.colorScheme.surface,
+                unfocusedContainerColor = MaterialTheme.colorScheme.surface,
                 focusedBorderColor = Color(0xFF8B5CF6),
                 unfocusedBorderColor = Color(0xFFE5E7EB),
-                focusedTextColor = Color(0xFF1F2937),
-                unfocusedTextColor = Color(0xFF1F2937)
+                focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                unfocusedTextColor = MaterialTheme.colorScheme.onSurface
             )
         )
 
@@ -267,7 +261,7 @@ fun DiaryScreen(
                     .height(50.dp),
                 shape = RoundedCornerShape(25.dp),
                 colors = ButtonDefaults.outlinedButtonColors(
-                    containerColor = Color.White,
+                    containerColor = MaterialTheme.colorScheme.surface,
                     contentColor = Color(0xFF8B5CF6)
                 ),
                 border = BorderStroke(1.5.dp, Color(0xFF8B5CF6))

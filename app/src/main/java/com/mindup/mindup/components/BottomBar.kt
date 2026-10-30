@@ -15,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.compose.material3.MaterialTheme
 import androidx.navigation.NavController
 import com.mindup.mindup.navigation.Routes
 
@@ -26,7 +27,7 @@ fun BottomBar(
 
     NavigationBar(
         modifier = Modifier.fillMaxWidth(),
-        containerColor = Color.White,
+        containerColor = MaterialTheme.colorScheme.surface,
         tonalElevation = 8.dp
     ) {
 
