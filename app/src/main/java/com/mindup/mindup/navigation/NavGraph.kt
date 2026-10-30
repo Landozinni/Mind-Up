@@ -40,7 +40,10 @@ object Routes {
 }
 @Preview
 @Composable
-fun NavGraph() {
+fun NavGraph(
+    darkTheme: Boolean = false,
+    onDarkThemeChange: (Boolean) -> Unit = {}
+) {
 
     val navController = rememberNavController()
 
@@ -195,16 +198,10 @@ fun NavGraph() {
                 ) {
 
                     ProfileScreen(
+                        darkThemeEnabled = darkTheme,
+                        onDarkThemeChange = onDarkThemeChange,
                         onBackClick = {
                             navController.navigate(Routes.INICIO)
-                        },
-
-                        onEditProfile = {
-                            // fazemos depois
-                        },
-
-                        onChangePassword = {
-                            // fazemos depois
                         },
 
                         onLogout = {
