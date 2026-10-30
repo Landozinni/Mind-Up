@@ -2,7 +2,7 @@ package com.mindup.mindup.components
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.BarChart
+import androidx.compose.material.icons.filled.Assignment
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Psychology
@@ -100,25 +100,25 @@ fun BottomBar(
         )
 
 
-        // RELATÓRIOS
+        // QUESTIONÁRIO DASS-21
         NavigationBarItem(
-            selected = currentRoute == Routes.RELATORIOS,
+            selected = currentRoute == Routes.DASS21,
 
             onClick = {
-                navController?.navigate(Routes.RELATORIOS) {
+                navController?.navigate(Routes.DASS21) {
                     launchSingleTop = true
                 }
             },
 
             icon = {
                 Icon(
-                    Icons.Default.BarChart,
-                    contentDescription = "Relatórios"
+                    Icons.Default.Assignment,
+                    contentDescription = "Questionário DASS-21"
                 )
             },
 
             label = {
-                Text("Relatórios")
+                Text("DASS-21")
             }
         )
 
