@@ -1,0 +1,106 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="780" height="1688" viewBox="0 0 390 844" role="img" aria-labelledby="title desc">
+  <title id="title">Esboço da tela inicial do Mind-Up</title>
+  <desc id="desc">Proposta de tela inicial para um aplicativo de bem-estar emocional, com saudação, check-in de humor, diário e navegação inferior.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#F8F5FF"/>
+      <stop offset="1" stop-color="#F1F7FF"/>
+    </linearGradient>
+    <linearGradient id="hero" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#8D68E8"/>
+      <stop offset="1" stop-color="#6548C9"/>
+    </linearGradient>
+    <filter id="shadow" x="-15%" y="-15%" width="130%" height="145%">
+      <feDropShadow dx="0" dy="5" stdDeviation="9" flood-color="#40366B" flood-opacity=".09"/>
+    </filter>
+    <style>
+      text { font-family: Inter, "Segoe UI", Arial, sans-serif; }
+      .ink { fill: #28243A; }
+      .muted { fill: #817D91; }
+      .small { font-size: 11px; }
+      .label { font-size: 13px; font-weight: 600; }
+      .card { fill: #FFFFFF; }
+    </style>
+  </defs>
+
+  <rect width="390" height="844" rx="30" fill="url(#bg)"/>
+  <rect x="0" y="0" width="390" height="30" fill="#F8F5FF"/>
+  <text x="25" y="20" font-size="12" font-weight="700" class="ink">9:41</text>
+  <g fill="#28243A" transform="translate(328 10)">
+    <rect x="0" y="2" width="3" height="7" rx="1"/><rect x="5" y="0" width="3" height="9" rx="1"/><rect x="10" y="-2" width="3" height="11" rx="1"/>
+    <path d="M20 2c4-4 10-4 14 0l-7 8z"/>
+    <rect x="39" y="-1" width="17" height="10" rx="3" fill="none" stroke="#28243A" stroke-width="1.5"/><rect x="41" y="1" width="11" height="6" rx="1.5"/><rect x="57" y="2" width="2" height="5" rx="1"/>
+  </g>
+
+  <g transform="translate(24 49)">
+    <circle cx="22" cy="22" r="22" fill="#E7DFFF"/>
+    <circle cx="22" cy="18" r="8" fill="#8D68E8"/>
+    <path d="M7 39c2-9 8-13 15-13s13 4 15 13" fill="#8D68E8"/>
+    <text x="57" y="17" class="muted" font-size="12">Bom dia,</text>
+    <text x="57" y="39" class="ink" font-size="21" font-weight="750">Guilherme</text>
+    <circle cx="314" cy="22" r="21" fill="#FFFFFF"/>
+    <path d="M308 23h12m-10 4h8m-6 4h4M310 18c0-4 2-7 6-7s6 3 6 7c0 2 1 4 2 5h-16c1-1 2-3 2-5z" fill="none" stroke="#6551A6" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="328" cy="8" r="4" fill="#FF7A8A"/>
+  </g>
+
+  <text x="24" y="132" class="ink" font-size="17" font-weight="700">Como você está se sentindo?</text>
+  <text x="24" y="152" class="muted" font-size="12">Um momento para cuidar de você.</text>
+
+  <g filter="url(#shadow)">
+    <rect x="24" y="170" width="342" height="180" rx="22" class="card"/>
+  </g>
+  <text x="44" y="199" class="ink" font-size="14" font-weight="700">Check-in de hoje</text>
+  <text x="44" y="219" class="muted" font-size="11">Escolha o que mais combina com seu momento</text>
+  <g text-anchor="middle">
+    <g transform="translate(65 257)"><circle r="24" fill="#FFF0ED"/><text y="7" font-size="23">😞</text><text y="48" class="muted" font-size="10">Difícil</text></g>
+    <g transform="translate(130 257)"><circle r="24" fill="#FFF5E5"/><text y="7" font-size="23">🙁</text><text y="48" class="muted" font-size="10">Mais ou menos</text></g>
+    <g transform="translate(195 257)"><circle r="24" fill="#FFF9D9"/><text y="7" font-size="23">😐</text><text y="48" class="muted" font-size="10">Neutro</text></g>
+    <g transform="translate(260 257)"><circle r="24" fill="#EAF7E9"/><text y="7" font-size="23">🙂</text><text y="48" class="muted" font-size="10">Bem</text></g>
+    <g transform="translate(325 257)"><circle r="24" fill="#E6F7F1"/><text y="7" font-size="23">😄</text><text y="48" class="muted" font-size="10">Muito bem</text></g>
+  </g>
+  <text x="195" y="332" text-anchor="middle" fill="#765BCB" font-size="11" font-weight="650">Toque em um humor para registrar seu dia  →</text>
+
+  <text x="24" y="390" class="ink" font-size="17" font-weight="700">Seu espaço de cuidado</text>
+  <g filter="url(#shadow)">
+    <rect x="24" y="407" width="342" height="132" rx="22" fill="url(#hero)"/>
+  </g>
+  <circle cx="316" cy="474" r="48" fill="#FFFFFF" opacity=".10"/>
+  <circle cx="334" cy="443" r="27" fill="#FFFFFF" opacity=".08"/>
+  <path d="M301 477c0-11 9-20 20-20s20 9 20 20v18h-40z" fill="#FFFFFF" opacity=".88"/>
+  <path d="M311 478c4-5 8-5 12 0m-6-9v19" fill="none" stroke="#765BCB" stroke-width="2" stroke-linecap="round"/>
+  <text x="46" y="438" fill="#E9E2FF" font-size="10" font-weight="700" letter-spacing="1">DIÁRIO EMOCIONAL</text>
+  <text x="46" y="466" fill="#FFFFFF" font-size="19" font-weight="750">Seu dia, do seu jeito.</text>
+  <text x="46" y="487" fill="#F0ECFF" font-size="11">Escreva, reflita e acompanhe</text>
+  <text x="46" y="503" fill="#F0ECFF" font-size="11">como você tem se sentido.</text>
+  <rect x="46" y="513" width="112" height="1" fill="#FFFFFF" opacity=".35"/>
+  <text x="46" y="529" fill="#FFFFFF" font-size="10" font-weight="700">ABRIR MEU DIÁRIO  →</text>
+
+  <text x="24" y="578" class="ink" font-size="17" font-weight="700">Continue sua jornada</text>
+  <g filter="url(#shadow)">
+    <rect x="24" y="595" width="163" height="112" rx="19" class="card"/>
+    <rect x="203" y="595" width="163" height="112" rx="19" class="card"/>
+  </g>
+  <circle cx="53" cy="625" r="17" fill="#F0EAFE"/>
+  <path d="M47 628l5-8 5 8 5 4H42z" fill="none" stroke="#795DD1" stroke-width="1.5" stroke-linejoin="round"/>
+  <text x="43" y="661" class="ink" font-size="12" font-weight="700">Minhas metas</text>
+  <text x="43" y="679" class="muted" font-size="10">Pequenos passos,</text>
+  <text x="43" y="693" class="muted" font-size="10">grandes conquistas</text>
+  <circle cx="232" cy="625" r="17" fill="#E9F4FF"/>
+  <path d="M226 619h12v13h-12zM229 616v6m6-6v6m-6 3h6m-6 3h4" fill="none" stroke="#4F84C8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="222" y="661" class="ink" font-size="12" font-weight="700">DASS-21</text>
+  <text x="222" y="679" class="muted" font-size="10">Entenda melhor</text>
+  <text x="222" y="693" class="muted" font-size="10">como você está</text>
+
+  <g>
+    <rect x="0" y="755" width="390" height="89" fill="#FFFFFF"/>
+    <path d="M0 755h390" stroke="#EEEAF5"/>
+    <g text-anchor="middle" font-size="9" font-weight="600">
+      <g transform="translate(39 779)"><path d="M-9 0l9-8 9 8v11h-6V4h-6v7h-6z" fill="#765BCB"/><text y="30" fill="#765BCB">Início</text></g>
+      <g transform="translate(117 779)"><path d="M-9-6h18v14H-9zM-5-10v7m10-7v7m-10 4h10" fill="none" stroke="#A5A1B1" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><text y="30" fill="#8A8797">Metas</text></g>
+      <g transform="translate(195 779)"><path d="M-8 9v-8a8 8 0 0 1 16 0v8m-16-2h4v6h-4zm12 0h4v6h-4zm-2 8h-5" fill="none" stroke="#8A8797" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><text y="30" fill="#8A8797">Diário</text></g>
+      <g transform="translate(273 779)"><rect x="-8" y="-9" width="16" height="19" rx="2" fill="none" stroke="#8A8797" stroke-width="1.7"/><path d="M-4-4h8m-8 4h8m-8 4h5" stroke="#8A8797" stroke-width="1.4" stroke-linecap="round"/><text y="30" fill="#8A8797">DASS-21</text></g>
+      <g transform="translate(351 779)"><circle cy="-5" r="5" fill="none" stroke="#8A8797" stroke-width="1.7"/><path d="M-9 10c1-7 4-10 9-10s8 3 9 10" fill="none" stroke="#8A8797" stroke-width="1.7" stroke-linecap="round"/><text y="30" fill="#8A8797">Perfil</text></g>
+    </g>
+    <rect x="142" y="831" width="106" height="4" rx="2" fill="#24222C"/>
+  </g>
+</svg>
