@@ -1,360 +1,153 @@
 package com.mindup.mindup.views
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Lightbulb
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Place
 import androidx.compose.material.icons.filled.Star
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.luminance
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalInspectionMode
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.mindup.mindup.ui.theme.MindUpTheme
+import com.google.firebase.auth.FirebaseAuth
+import android.widget.Toast
+import androidx.compose.ui.platform.LocalContext
+import com.mindup.mindup.DBHelper
+import com.mindup.mindup.MENSAGEM_DIARIO_JA_PREENCHIDO
+import com.mindup.mindup.R
 import com.mindup.mindup.ui.theme.MindUpBackgroundBrush
+import com.mindup.mindup.ui.theme.MindUpTheme
+import com.mindup.mindup.ui.theme.RosaMindUp
 
-// Define a paleta de cores em tons de roxo
-val PurplePrimary = Color(0xFF6B52AE)
-val PurpleGradientStart = Color(0xFF7A5EC7)
-val PurpleGradientEnd = Color(0xFF987AE8)
-val BackgroundLight = Color(0xFFF8F6FF)
-val CardBackground = Color(0xFFFFFFFF)
-val TextDark = Color(0xFF2D2A32)
-val TextMuted = Color(0xFF8E8A99)
-val ChipSelectedBackground = Color(0xFFEADBFF)
-
-data class SummaryData(
-    val icon: String,
-    val value: String,
-    val label: String,
-    val containerColor: Color
-)
-
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     userName: String = "Usuário",
+    welcomeMessage: String? = null,
+    textLines: List<String> = emptyList(),
     onNavigateToMetas: () -> Unit = {},
     onNavigateToDiario: () -> Unit = {},
     onNavigateToPerfil: () -> Unit = {},
-    bottomBar: @Composable () -> Unit = { CustomBottomNavigation() }
+    bottomBar: @Composable () -> Unit = { CustomBottomNavigation(onNavigateToDiario = onNavigateToDiario) }
 ) {
+    val isPreview = LocalInspectionMode.current
+    val auth = remember { if (isPreview) null else FirebaseAuth.getInstance() }
+    val currentUser = auth?.currentUser
+    val displayedUserName = remember(currentUser?.uid, userName) {
+        if (userName.isNotBlank() && userName != "Usuário") {
+            userName
+        } else {
+            currentUser?.displayName?.takeIf { it.isNotBlank() }
+                ?: currentUser?.email?.substringBefore("@")?.takeIf { it.isNotBlank() }
+                ?: userName
+        }
+    }
+
+    val finalWelcomeText = welcomeMessage ?: "Bem-vindo, $displayedUserName"
+
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
         bottomBar = bottomBar
     ) { paddingValues ->
-        LazyColumn(
+        Column(
             modifier = Modifier
                 .fillMaxSize()
                 .background(MindUpBackgroundBrush())
                 .padding(paddingValues)
-                .padding(horizontal = 20.dp),
-            verticalArrangement = Arrangement.spacedBy(20.dp)
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = 24.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            item { Spacer(modifier = Modifier.height(8.dp)) }
+            Spacer(modifier = Modifier.height(48.dp))
 
-            // 1. Cabeçalho dinâmico com o nome do usuário
-            item { HeaderSection(userName = userName) }
+            // Logo do aplicativo (a mesma utilizada na página de login)
+            Image(
+                painter = painterResource(R.drawable.mindup_logo),
+                contentDescription = "Logo do MindUp",
+                modifier = Modifier.size(180.dp),
+                contentScale = ContentScale.Fit
+            )
 
-            // 2. Card "Frase do dia"
-            item { DailyQuoteCard() }
+            Spacer(modifier = Modifier.height(24.dp))
 
-            // 3. Banner principal "Começar agora"
-            item { ActionBannerSection(onStartClick = onNavigateToDiario) }
-
-            // 4. Seção "Seu resumo"
-            item { SummarySection() }
-
-            // 5. Card "Sugestão personalizada"
-            item { SuggestionCard() }
-
-            item { Spacer(modifier = Modifier.height(16.dp)) }
-        }
-    }
-}
-
-@Composable
-fun HeaderSection(userName: String) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Box(
-                modifier = Modifier
-                    .size(36.dp)
-                    .clip(CircleShape)
-                    .background(PurplePrimary),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(text = "🧠", fontSize = 20.sp)
-            }
-            Spacer(modifier = Modifier.width(8.dp))
+            // Mensagem de boas-vindas na cor rosa do aplicativo
             Text(
-                text = "MindUp",
-                fontSize = 24.sp,
+                text = finalWelcomeText,
+                color = RosaMindUp,
+                fontSize = 28.sp,
                 fontWeight = FontWeight.Bold,
-                color = PurplePrimary
+                textAlign = TextAlign.Center,
+                lineHeight = 36.sp
             )
-        }
-        Column(horizontalAlignment = Alignment.End) {
-            Text(
-                text = "Bom dia, $userName 👋",
-                fontSize = 14.sp,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onSurface
-            )
-            Text(
-                text = "26 de abril de 2025",
-                fontSize = 12.sp,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-        }
-    }
-}
 
-@Composable
-fun DailyQuoteCard() {
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(20.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
-    ) {
-        Column(modifier = Modifier.padding(20.dp)) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(text = "☀️", fontSize = 14.sp)
-                Spacer(modifier = Modifier.width(6.dp))
-                Text(
-                    text = "Frase do dia",
-                    fontSize = 12.sp,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    fontWeight = FontWeight.Medium
-                )
-            }
-            Spacer(modifier = Modifier.height(10.dp))
-            Text(
-                text = "“Pequenos passos diários transformam grandes objetivos.”",
-                fontSize = 16.sp,
-                fontWeight = FontWeight.SemiBold,
-                color = MaterialTheme.colorScheme.onSurface,
-                lineHeight = 22.sp
-            )
-        }
-    }
-}
+            Spacer(modifier = Modifier.height(32.dp))
 
-@Composable
-fun ActionBannerSection(onStartClick: () -> Unit = {}) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable { onStartClick() },
-        shape = RoundedCornerShape(20.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.Transparent)
-    ) {
-        Box(
-            modifier = Modifier
-                .background(
-                    brush = Brush.horizontalGradient(
-                        colors = listOf(PurpleGradientStart, PurpleGradientEnd)
-                    )
-                )
-                .padding(20.dp)
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.weight(1f)
+            // Espaço abaixo reservado para linhas de texto, com a cor da fonte em rosa do app
+            CompositionLocalProvider(LocalContentColor provides RosaMindUp) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 8.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Box(
-                        modifier = Modifier
-                            .size(48.dp)
-                            .clip(CircleShape)
-                            .background(Color.White.copy(alpha = 0.2f)),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(text = "🪷", fontSize = 24.sp)
-                    }
-                    Spacer(modifier = Modifier.width(16.dp))
-                    Column {
-                        Text(
-                            text = "Começar agora",
-                            fontSize = 18.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = Color.White
-                        )
-                        Text(
-                            text = "Respiração • Meditação • Diário • Exercícios",
-                            fontSize = 11.sp,
-                            color = Color.White.copy(alpha = 0.8f)
-                        )
+                    if (textLines.isNotEmpty()) {
+                        textLines.forEach { line ->
+                            Text(
+                                text = line,
+                                color = RosaMindUp,
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.Medium,
+                                textAlign = TextAlign.Center,
+                                lineHeight = 22.sp
+                            )
+                        }
+                    } else {
+                        // Espaço vazio para futuras linhas de texto
+                        Spacer(modifier = Modifier.height(180.dp))
                     }
                 }
-                Icon(
-                    imageVector = Icons.Default.ArrowForward,
-                    contentDescription = null,
-                    tint = Color.White
-                )
             }
+
+            Spacer(modifier = Modifier.height(32.dp))
         }
     }
 }
 
 @Composable
-fun SummarySection() {
-    val isDarkTheme = MaterialTheme.colorScheme.background.luminance() < 0.5f
-    val items = listOf(
-        SummaryData("🔥", "5", "dias de sequência", Color(0xFFFFF2EC)),
-        SummaryData("🪷", "12 min", "meditados hoje", Color(0xFFEBF3FF)),
-        SummaryData("📝", "3", "entradas no diário", Color(0xFFECE6FF)),
-        SummaryData("⭐", "4,2", "humor médio da semana", Color(0xFFE8F8F0))
-    )
-
-    Column {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = "Seu resumo",
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onSurface
-            )
-            Text(
-                text = "Ver mais >",
-                fontSize = 13.sp,
-                fontWeight = FontWeight.Bold,
-                color = PurplePrimary,
-                modifier = Modifier.clickable { }
-            )
-        }
-        Spacer(modifier = Modifier.height(12.dp))
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            items.forEach { data ->
-                Card(
-                    modifier = Modifier.weight(1f),
-                    shape = RoundedCornerShape(16.dp),
-                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-                    colors = CardDefaults.cardColors(
-                        containerColor = if (isDarkTheme) MaterialTheme.colorScheme.surfaceVariant else data.containerColor
-                    )
-                ) {
-                    Column(
-                        modifier = Modifier.padding(12.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Text(text = data.icon, fontSize = 20.sp)
-                        Spacer(modifier = Modifier.height(4.dp))
-                        Text(
-                            text = data.value,
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onSurface
-                        )
-                        Text(
-                            text = data.label,
-                            fontSize = 9.sp,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            lineHeight = 11.sp
-                        )
-                    }
-                }
-            }
-        }
-    }
-}
-
-@Composable
-fun SuggestionCard() {
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(20.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Row(
-                modifier = Modifier.weight(1f),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Lightbulb,
-                    contentDescription = null,
-                    tint = PurplePrimary,
-                    modifier = Modifier.size(28.dp)
-                )
-                Spacer(modifier = Modifier.width(12.dp))
-                Column {
-                    Text(
-                        text = "Sugestão personalizada",
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = PurplePrimary
-                    )
-                    Text(
-                        text = "Você relatou ansiedade ontem. Que tal fazer uma respiração de 3 minutos?",
-                        fontSize = 11.sp,
-                        color = MaterialTheme.colorScheme.onSurface,
-                        lineHeight = 14.sp
-                    )
-                }
-            }
-            Spacer(modifier = Modifier.width(8.dp))
-            Button(
-                onClick = { },
-                colors = ButtonDefaults.buttonColors(containerColor = PurplePrimary),
-                shape = RoundedCornerShape(12.dp),
-                contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp)
-            ) {
-                Text(text = "Iniciar", fontSize = 12.sp, color = Color.White)
-                Spacer(modifier = Modifier.width(4.dp))
-                Icon(
-                    imageVector = Icons.Default.ArrowForward,
-                    contentDescription = null,
-                    modifier = Modifier.size(14.dp),
-                    tint = Color.White
-                )
-            }
-        }
-    }
-}
-
-@Composable
-fun CustomBottomNavigation() {
+fun CustomBottomNavigation(
+    onNavigateToDiario: () -> Unit = {}
+) {
+    val context = LocalContext.current
     NavigationBar(
         containerColor = MaterialTheme.colorScheme.surface,
         tonalElevation = 8.dp
@@ -365,9 +158,9 @@ fun CustomBottomNavigation() {
             icon = { Icon(Icons.Default.Home, contentDescription = "Home") },
             label = { Text("Home", fontSize = 10.sp) },
             colors = NavigationBarItemDefaults.colors(
-                selectedIconColor = PurplePrimary,
-                selectedTextColor = PurplePrimary,
-                indicatorColor = ChipSelectedBackground
+                selectedIconColor = RosaMindUp,
+                selectedTextColor = RosaMindUp,
+                indicatorColor = RosaMindUp.copy(alpha = 0.2f)
             )
         )
         NavigationBarItem(
@@ -379,7 +172,15 @@ fun CustomBottomNavigation() {
         )
         NavigationBarItem(
             selected = false,
-            onClick = { },
+            onClick = {
+                val dbHelper = DBHelper(context)
+                val jaPreencheu = runCatching { dbHelper.possuiEntradaDiario() }.getOrDefault(false)
+                if (jaPreencheu) {
+                    Toast.makeText(context, MENSAGEM_DIARIO_JA_PREENCHIDO, Toast.LENGTH_SHORT).show()
+                } else {
+                    onNavigateToDiario()
+                }
+            },
             icon = { Icon(Icons.Default.Star, contentDescription = "Diário") },
             label = { Text("Diário", fontSize = 10.sp) },
             colors = NavigationBarItemDefaults.colors(unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant)
@@ -406,5 +207,19 @@ fun CustomBottomNavigation() {
 fun HomeScreenPreview() {
     MindUpTheme {
         HomeScreen(userName = "Guilherme")
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun HomeScreenWithTextLinesPreview() {
+    MindUpTheme {
+        HomeScreen(
+            userName = "Guilherme",
+            textLines = listOf(
+                "Espaço reservado para anotações do dia.",
+                "Suas metas e reflexões aparecem aqui."
+            )
+        )
     }
 }

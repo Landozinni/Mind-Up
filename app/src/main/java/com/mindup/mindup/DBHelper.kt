@@ -24,6 +24,8 @@ enum class DiarySaveResult {
     ERROR
 }
 
+const val MENSAGEM_DIARIO_JA_PREENCHIDO = "Você já preecheu seu diário hoje!"
+
 class DBHelper(context: Context) :
     SQLiteOpenHelper(context, "app.db", null, 3) {
 
@@ -252,11 +254,14 @@ class DBHelper(context: Context) :
         }
     }
 
-    fun possuiEntradaDiario(): Boolean {
-        val cursor = readableDatabase.rawQuery(
-            "SELECT id FROM diario WHERE date(data_criacao, 'localtime') = date('now', 'localtime') LIMIT 1",
-            null
-        )
+    fun possuiEntradaDiario(dataSqlite: String? = null): Boolean {
+        val query = if (dataSqlite.isNullOrBlank()) {
+            "SELECT id FROM diario WHERE date(data_criacao, 'localtime') = date('now', 'localtime') LIMIT 1"
+        } else {
+            "SELECT id FROM diario WHERE date(data_criacao, 'localtime') = date(?) LIMIT 1"
+        }
+        val args = if (dataSqlite.isNullOrBlank()) null else arrayOf(dataSqlite.trim())
+        val cursor = readableDatabase.rawQuery(query, args)
         return cursor.use { it.moveToFirst() }
     }
 

@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mindup.mindup.DBHelper
 import com.mindup.mindup.DiarySaveResult
+import com.mindup.mindup.MENSAGEM_DIARIO_JA_PREENCHIDO
 import com.mindup.mindup.model.DiaryEntry
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -144,7 +145,7 @@ class DiaryViewModel : ViewModel() {
                         isSaving = false,
                         diaryAlreadyExists = true,
                         saveSuccess = false,
-                        errorMessage = "Você já registrou seu diário de hoje."
+                        errorMessage = MENSAGEM_DIARIO_JA_PREENCHIDO
                     )
                 }
             } else {
