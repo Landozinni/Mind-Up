@@ -40,10 +40,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.google.firebase.auth.FirebaseAuth
-import android.widget.Toast
-import androidx.compose.ui.platform.LocalContext
-import com.mindup.mindup.DBHelper
-import com.mindup.mindup.MENSAGEM_DIARIO_JA_PREENCHIDO
 import com.mindup.mindup.R
 import com.mindup.mindup.ui.theme.MindUpBackgroundBrush
 import com.mindup.mindup.ui.theme.MindUpTheme
@@ -147,7 +143,6 @@ fun HomeScreen(
 fun CustomBottomNavigation(
     onNavigateToDiario: () -> Unit = {}
 ) {
-    val context = LocalContext.current
     NavigationBar(
         containerColor = MaterialTheme.colorScheme.surface,
         tonalElevation = 8.dp
@@ -172,15 +167,7 @@ fun CustomBottomNavigation(
         )
         NavigationBarItem(
             selected = false,
-            onClick = {
-                val dbHelper = DBHelper(context)
-                val jaPreencheu = runCatching { dbHelper.possuiEntradaDiario() }.getOrDefault(false)
-                if (jaPreencheu) {
-                    Toast.makeText(context, MENSAGEM_DIARIO_JA_PREENCHIDO, Toast.LENGTH_SHORT).show()
-                } else {
-                    onNavigateToDiario()
-                }
-            },
+            onClick = onNavigateToDiario,
             icon = { Icon(Icons.Default.Star, contentDescription = "Diário") },
             label = { Text("Diário", fontSize = 10.sp) },
             colors = NavigationBarItemDefaults.colors(unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant)

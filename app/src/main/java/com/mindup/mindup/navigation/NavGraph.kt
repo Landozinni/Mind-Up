@@ -6,12 +6,9 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.core.tween
-import android.widget.Toast
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
-import com.mindup.mindup.DBHelper
-import com.mindup.mindup.MENSAGEM_DIARIO_JA_PREENCHIDO
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
@@ -186,13 +183,7 @@ fun NavGraph(
                     navController.navigate(Routes.METAS)
                 },
                 onNavigateToDiario = {
-                    val dbHelper = DBHelper(context)
-                    val jaPreencheu = runCatching { dbHelper.possuiEntradaDiario() }.getOrDefault(false)
-                    if (jaPreencheu) {
-                        Toast.makeText(context, MENSAGEM_DIARIO_JA_PREENCHIDO, Toast.LENGTH_SHORT).show()
-                    } else {
-                        navController.navigate(Routes.DIARIO)
-                    }
+                    navController.navigate(Routes.DIARIO)
                 },
                 onNavigateToPerfil = {
                     navController.navigate(Routes.PERFIL)
@@ -266,33 +257,21 @@ fun NavGraph(
         // =========================
 
         composable(Routes.DIARIO) {
-            val dbHelper = remember { DBHelper(context) }
-            val jaPreencheuHoje = remember {
-                runCatching { dbHelper.possuiEntradaDiario() }.getOrDefault(false)
-            }
+            DiaryScreen(
 
-            if (jaPreencheuHoje) {
-                LaunchedEffect(Unit) {
-                    Toast.makeText(context, MENSAGEM_DIARIO_JA_PREENCHIDO, Toast.LENGTH_SHORT).show()
+                onVoltar = {
                     navController.popBackStack()
-                }
-            } else {
-                DiaryScreen(
+                },
 
-                    onVoltar = {
-                        navController.popBackStack()
-                    },
-
-                    onFinalizar = {
-                        navController.navigate(Routes.INICIO) {
-                            popUpTo(Routes.INICIO) {
-                                inclusive = false
-                            }
-                            launchSingleTop = true
+                onFinalizar = {
+                    navController.navigate(Routes.INICIO) {
+                        popUpTo(Routes.INICIO) {
+                            inclusive = false
                         }
+                        launchSingleTop = true
                     }
-                )
-            }
+                }
+            )
         }
 
 
