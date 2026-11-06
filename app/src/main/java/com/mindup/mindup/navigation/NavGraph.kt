@@ -36,6 +36,7 @@ import com.mindup.mindup.components.BottomBar
 import com.mindup.mindup.views.HomeScreen
 import com.mindup.mindup.views.GoalsScreen
 import com.mindup.mindup.views.ProfileScreen
+import com.mindup.mindup.views.PracticesScreen
 object Routes {
 
     const val LOGIN = "login"
@@ -45,6 +46,7 @@ object Routes {
 
     const val INICIO = "inicio"
     const val METAS = "metas"
+    const val PRATICAS = "praticas"
     const val MINDUP = "mindup"
     const val RELATORIOS = "relatorios"
     const val PERFIL = "perfil"
@@ -214,6 +216,18 @@ fun NavGraph(
                         currentRoute = Routes.METAS
                     )
                 }
+            )
+        }
+
+        // =========================
+        // PRÁTICAS GUIADAS
+        // =========================
+        composable(Routes.PRATICAS) {
+            PracticesScreen(
+                bottomBar = {
+                    BottomBar(navController = navController, currentRoute = Routes.PRATICAS)
+                },
+                onOpenDass21 = { navController.navigate(Routes.DASS21) }
             )
         }
 

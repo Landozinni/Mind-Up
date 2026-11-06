@@ -6,6 +6,7 @@ import androidx.compose.material.icons.filled.Assignment
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Psychology
+import androidx.compose.material.icons.filled.Spa
 import androidx.compose.material.icons.filled.TrackChanges
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
@@ -56,6 +57,19 @@ fun BottomBar(
             label = {
                 Text("Início")
             }
+        )
+
+
+        // PRÁTICAS GUIADAS
+        NavigationBarItem(
+            selected = currentRoute == Routes.PRATICAS,
+            onClick = {
+                navController?.navigate(Routes.PRATICAS) {
+                    launchSingleTop = true
+                }
+            },
+            icon = { Icon(Icons.Default.Spa, contentDescription = "Práticas") },
+            label = { Text("Práticas", maxLines = 1) }
         )
 
 
@@ -129,7 +143,7 @@ fun BottomBar(
             },
 
             label = {
-                Text("DASS-21")
+                Text("DASS", maxLines = 1)
             }
         )
 

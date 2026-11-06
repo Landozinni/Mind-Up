@@ -14,8 +14,14 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.OffsetMapping
+import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.input.TransformedText
+import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -35,7 +41,10 @@ fun GoalDialog(
     var description by remember(existing) { mutableStateOf(existing?.description.orEmpty()) }
     var category by remember(existing) { mutableStateOf(existing?.category ?: "Pessoal") }
     var target by remember(existing) { mutableStateOf((existing?.targetValue ?: 1).toString()) }
-    var dueDate by remember(existing) { mutableStateOf(existing?.dueDate?.let(::dateForDisplay).orEmpty()) }
+    var dueDateField by remember(existing) {
+        val digits = existing?.dueDate?.let(::dateForDisplay)?.filter(Char::isDigit).orEmpty()
+        mutableStateOf(TextFieldValue(digits, selection = TextRange(digits.length)))
+    }
     var frequency by remember(existing) { mutableStateOf(existing?.frequency.orEmpty()) }
     var error by remember(existing) { mutableStateOf<String?>(null) }
     val categories = listOf("Pessoal", "Saúde", "Estudos", "Carreira", "Relacionamentos", "Outro")
@@ -151,14 +160,23 @@ fun GoalDialog(
                     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                         SectionLabel("PLANEJAMENTO · OPCIONAL")
                         OutlinedTextField(
-                            value = dueDate,
-                            onValueChange = { dueDate = formatDateInput(it); error = null },
+                            value = dueDateField,
+                            onValueChange = { input ->
+                                val digits = input.text.filter(Char::isDigit).take(8)
+                                val selection = TextRange(
+                                    input.selection.start.coerceAtMost(digits.length),
+                                    input.selection.end.coerceAtMost(digits.length)
+                                )
+                                dueDateField = input.copy(text = digits, selection = selection)
+                                error = null
+                            },
                             modifier = Modifier.fillMaxWidth(),
                             label = { Text("Prazo") },
                             placeholder = { Text("DD/MM/AAAA") },
                             leadingIcon = { Icon(Icons.Default.Schedule, contentDescription = null) },
                             supportingText = { Text("Digite os números. Ex.: 26082008 → 26/08/2008") },
                             keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(keyboardType = KeyboardType.Number),
+                            visualTransformation = DateInputVisualTransformation(),
                             singleLine = true,
                             isError = error?.contains("data", ignoreCase = true) == true,
                             shape = RoundedCornerShape(16.dp)
@@ -186,8 +204,9 @@ fun GoalDialog(
                     Button(
                         onClick = {
                             val amount = target.toIntOrNull()
+                            val dueDate = dueDateField.text.let(::formatDateInput)
                             val storedDate = dueDate.toStoredDate()
-                            val validDate = dueDate.isBlank() || storedDate != null
+                            val validDate = dueDateField.text.isBlank() || storedDate != null
                             error = when {
                                 title.isBlank() -> "Informe um título para sua meta."
                                 amount == null || amount <= 0 -> "A quantidade deve ser maior que zero."
@@ -220,6 +239,30 @@ private fun formatDateInput(input: String): String {
         digits.length <= 2 -> digits
         digits.length <= 4 -> "${digits.take(2)}/${digits.drop(2)}"
         else -> "${digits.take(2)}/${digits.substring(2, 4)}/${digits.drop(4)}"
+    }
+}
+
+private class DateInputVisualTransformation : VisualTransformation {
+    override fun filter(text: AnnotatedString): TransformedText {
+        val digits = text.text
+        val display = formatDateInput(digits)
+        val mapping = object : OffsetMapping {
+            override fun originalToTransformed(offset: Int): Int {
+                val safeOffset = offset.coerceIn(0, digits.length)
+                val firstSlash = digits.length > 2 && safeOffset >= 2
+                val secondSlash = digits.length > 4 && safeOffset >= 4
+                return safeOffset + (if (firstSlash) 1 else 0) + (if (secondSlash) 1 else 0)
+            }
+
+            override fun transformedToOriginal(offset: Int): Int {
+                val safeOffset = offset.coerceIn(0, display.length)
+                val firstSlash = digits.length > 2 && safeOffset >= 3
+                val secondSlash = digits.length > 4 && safeOffset >= 6
+                return (safeOffset - (if (firstSlash) 1 else 0) - (if (secondSlash) 1 else 0))
+                    .coerceIn(0, digits.length)
+            }
+        }
+        return TransformedText(AnnotatedString(display), mapping)
     }
 }
 
