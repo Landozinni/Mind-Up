@@ -16,12 +16,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import android.widget.Toast
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavController
-import com.mindup.mindup.DBHelper
-import com.mindup.mindup.MENSAGEM_DIARIO_JA_PREENCHIDO
 import com.mindup.mindup.navigation.Routes
 
 @Composable
@@ -29,8 +25,6 @@ fun BottomBar(
     navController: NavController? = null,
     currentRoute: String = Routes.INICIO
 ) {
-    val context = LocalContext.current
-
     NavigationBar(
         modifier = Modifier.fillMaxWidth(),
         containerColor = MaterialTheme.colorScheme.surface,
@@ -101,14 +95,8 @@ fun BottomBar(
             selected = currentRoute == Routes.MINDUP || currentRoute == Routes.DIARIO,
 
             onClick = {
-                val dbHelper = DBHelper(context)
-                val jaPreencheu = runCatching { dbHelper.possuiEntradaDiario() }.getOrDefault(false)
-                if (jaPreencheu) {
-                    Toast.makeText(context, MENSAGEM_DIARIO_JA_PREENCHIDO, Toast.LENGTH_SHORT).show()
-                } else {
-                    navController?.navigate(Routes.DIARIO) {
-                        launchSingleTop = true
-                    }
+                navController?.navigate(Routes.DIARIO) {
+                    launchSingleTop = true
                 }
             },
 

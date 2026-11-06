@@ -36,7 +36,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mindup.mindup.DBHelper
-import com.mindup.mindup.MENSAGEM_DIARIO_JA_PREENCHIDO
 import com.mindup.mindup.ui.theme.AzulMindUp
 import com.mindup.mindup.ui.theme.MindUpFont
 import com.mindup.mindup.ui.theme.RosaMindUp
@@ -88,13 +87,6 @@ fun DiaryScreen(
         uiState.errorMessage?.let { msg ->
             Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
             viewModel.clearErrorMessage()
-        }
-    }
-
-    LaunchedEffect(uiState.diaryAlreadyExists) {
-        if (uiState.diaryAlreadyExists && !uiState.saveSuccess) {
-            Toast.makeText(context, MENSAGEM_DIARIO_JA_PREENCHIDO, Toast.LENGTH_SHORT).show()
-            onVoltar()
         }
     }
 
