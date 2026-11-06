@@ -15,6 +15,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -34,7 +35,7 @@ fun GoalDialog(
     var description by remember(existing) { mutableStateOf(existing?.description.orEmpty()) }
     var category by remember(existing) { mutableStateOf(existing?.category ?: "Pessoal") }
     var target by remember(existing) { mutableStateOf((existing?.targetValue ?: 1).toString()) }
-    var dueDate by remember(existing) { mutableStateOf(existing?.dueDate.orEmpty()) }
+    var dueDate by remember(existing) { mutableStateOf(existing?.dueDate?.let(::dateForDisplay).orEmpty()) }
     var frequency by remember(existing) { mutableStateOf(existing?.frequency.orEmpty()) }
     var error by remember(existing) { mutableStateOf<String?>(null) }
     val categories = listOf("Pessoal", "Saúde", "Estudos", "Carreira", "Relacionamentos", "Outro")
@@ -151,12 +152,13 @@ fun GoalDialog(
                         SectionLabel("PLANEJAMENTO · OPCIONAL")
                         OutlinedTextField(
                             value = dueDate,
-                            onValueChange = { dueDate = it.take(10); error = null },
+                            onValueChange = { dueDate = formatDateInput(it); error = null },
                             modifier = Modifier.fillMaxWidth(),
                             label = { Text("Prazo") },
-                            placeholder = { Text("AAAA-MM-DD") },
+                            placeholder = { Text("DD/MM/AAAA") },
                             leadingIcon = { Icon(Icons.Default.Schedule, contentDescription = null) },
-                            supportingText = { Text("Digite no formato AAAA-MM-DD.") },
+                            supportingText = { Text("Digite os números. Ex.: 26082008 → 26/08/2008") },
+                            keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(keyboardType = KeyboardType.Number),
                             singleLine = true,
                             isError = error?.contains("data", ignoreCase = true) == true,
                             shape = RoundedCornerShape(16.dp)
@@ -184,20 +186,18 @@ fun GoalDialog(
                     Button(
                         onClick = {
                             val amount = target.toIntOrNull()
-                            val validDate = dueDate.isBlank() || runCatching {
-                                val formatter = SimpleDateFormat("yyyy-MM-dd", Locale.ROOT).apply { isLenient = false }
-                                formatter.parse(dueDate) != null && formatter.format(formatter.parse(dueDate)!!) == dueDate
-                            }.getOrDefault(false)
+                            val storedDate = dueDate.toStoredDate()
+                            val validDate = dueDate.isBlank() || storedDate != null
                             error = when {
                                 title.isBlank() -> "Informe um título para sua meta."
                                 amount == null || amount <= 0 -> "A quantidade deve ser maior que zero."
-                                !validDate -> "Use uma data válida no formato AAAA-MM-DD."
+                                !validDate -> "Digite uma data válida no formato DD/MM/AAAA."
                                 else -> null
                             }
                             if (error == null) {
                                 val safeTarget = amount!!
                                 val current = (existing?.currentValue ?: 0).coerceIn(0, safeTarget)
-                                onSave(Goal(id = existing?.id ?: 0, emoji = emoji, title = title.trim(), description = description.trim(), currentValue = current, targetValue = safeTarget, progress = current.toFloat() / safeTarget, progressText = "$current de $safeTarget", category = category, dueDate = dueDate, frequency = frequency.trim()))
+                                onSave(Goal(id = existing?.id ?: 0, emoji = emoji, title = title.trim(), description = description.trim(), currentValue = current, targetValue = safeTarget, progress = current.toFloat() / safeTarget, progressText = "$current de $safeTarget", category = category, dueDate = storedDate.orEmpty(), frequency = frequency.trim()))
                             }
                         },
                         modifier = Modifier.weight(1.35f).height(52.dp),
@@ -212,4 +212,33 @@ fun GoalDialog(
 @Composable
 private fun SectionLabel(label: String) {
     Text(label, style = MaterialTheme.typography.labelMedium, fontWeight = FontWeight.Bold, letterSpacing = 1.sp, color = MaterialTheme.colorScheme.primary)
+}
+
+private fun formatDateInput(input: String): String {
+    val digits = input.filter(Char::isDigit).take(8)
+    return when {
+        digits.length <= 2 -> digits
+        digits.length <= 4 -> "${digits.take(2)}/${digits.drop(2)}"
+        else -> "${digits.take(2)}/${digits.substring(2, 4)}/${digits.drop(4)}"
+    }
+}
+
+private fun String.toStoredDate(): String? {
+    if (length != 10) return null
+    return runCatching {
+        val displayFormat = SimpleDateFormat("dd/MM/yyyy", Locale.ROOT).apply { isLenient = false }
+        val parsed = displayFormat.parse(this) ?: return null
+        if (displayFormat.format(parsed) != this) return null
+        SimpleDateFormat("yyyy-MM-dd", Locale.ROOT).format(parsed)
+    }.getOrNull()
+}
+
+private fun dateForDisplay(date: String): String {
+    if (date.isBlank()) return ""
+    val isoFormat = SimpleDateFormat("yyyy-MM-dd", Locale.ROOT).apply { isLenient = false }
+    val displayFormat = SimpleDateFormat("dd/MM/yyyy", Locale.ROOT)
+    return runCatching {
+        val parsed = isoFormat.parse(date) ?: return date
+        if (isoFormat.format(parsed) == date) displayFormat.format(parsed) else date
+    }.getOrDefault(date)
 }
