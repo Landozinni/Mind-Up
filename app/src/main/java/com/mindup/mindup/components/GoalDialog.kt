@@ -1,31 +1,35 @@
 package com.mindup.mindup.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Flag
 import androidx.compose.material.icons.filled.Schedule
-import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.OffsetMapping
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.TransformedText
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import com.mindup.mindup.R
 import com.mindup.mindup.model.Goal
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -36,7 +40,6 @@ fun GoalDialog(
     onSave: (Goal) -> Unit,
     existing: Goal? = null
 ) {
-    var emoji by remember(existing) { mutableStateOf(existing?.emoji ?: "🎯") }
     var title by remember(existing) { mutableStateOf(existing?.title.orEmpty()) }
     var description by remember(existing) { mutableStateOf(existing?.description.orEmpty()) }
     var category by remember(existing) { mutableStateOf(existing?.category ?: "Pessoal") }
@@ -48,7 +51,6 @@ fun GoalDialog(
     var frequency by remember(existing) { mutableStateOf(existing?.frequency.orEmpty()) }
     var error by remember(existing) { mutableStateOf<String?>(null) }
     val categories = listOf("Pessoal", "Saúde", "Estudos", "Carreira", "Relacionamentos", "Outro")
-    val emojis = listOf("🎯", "🌱", "📚", "💪", "🧘", "💼", "💛", "✨")
     val colors = MaterialTheme.colorScheme
 
     Dialog(
@@ -56,151 +58,173 @@ fun GoalDialog(
         properties = DialogProperties(usePlatformDefaultWidth = false)
     ) {
         Surface(
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 18.dp).heightIn(max = 720.dp),
-            shape = RoundedCornerShape(28.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 18.dp)
+                .heightIn(max = 700.dp),
+            shape = RoundedCornerShape(24.dp),
             color = colors.surface,
-            tonalElevation = 8.dp
+            tonalElevation = 6.dp
         ) {
             Column {
                 Row(
-                    modifier = Modifier.fillMaxWidth().padding(start = 24.dp, end = 16.dp, top = 22.dp, bottom = 16.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 20.dp, end = 12.dp, top = 18.dp, bottom = 14.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Column(Modifier.weight(1f)) {
-                        Text(if (existing == null) "Nova meta" else "Editar meta", fontSize = 24.sp, fontWeight = FontWeight.Bold, color = colors.onSurface)
-                        Spacer(Modifier.height(4.dp))
-                        Text("Defina um passo de cada vez.", style = MaterialTheme.typography.bodyMedium, color = colors.onSurfaceVariant)
-                    }
-                    IconButton(onClick = onDismiss) {
-                        Icon(Icons.Default.Close, contentDescription = "Fechar", tint = colors.onSurfaceVariant)
-                    }
-                }
-                HorizontalDivider(color = colors.outlineVariant.copy(alpha = .6f))
-
-                Column(
-                    modifier = Modifier.weight(1f, fill = false).verticalScroll(rememberScrollState()).padding(horizontal = 24.dp, vertical = 18.dp),
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
-                    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                        SectionLabel("DÊ UM NOME À SUA META")
-                        Row(verticalAlignment = Alignment.Top, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                Surface(shape = RoundedCornerShape(16.dp), color = colors.secondaryContainer) {
-                                    Text(emoji, modifier = Modifier.padding(horizontal = 14.dp, vertical = 12.dp), fontSize = 25.sp)
-                                }
-                                var emojiMenu by remember { mutableStateOf(false) }
-                                TextButton(onClick = { emojiMenu = true }, contentPadding = PaddingValues(horizontal = 2.dp)) { Text("Ícone", fontSize = 12.sp) }
-                                DropdownMenu(expanded = emojiMenu, onDismissRequest = { emojiMenu = false }) {
-                                    emojis.chunked(4).forEach { row ->
-                                        Row {
-                                            row.forEach { choice ->
-                                                DropdownMenuItem(
-                                                    text = { Text(choice, fontSize = 22.sp) },
-                                                    onClick = { emoji = choice; emojiMenu = false },
-                                                    modifier = Modifier.width(56.dp)
-                                                )
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                            OutlinedTextField(
-                                value = title,
-                                onValueChange = { title = it; error = null },
-                                modifier = Modifier.weight(1f),
-                                label = { Text("Título") },
-                                placeholder = { Text("Ex.: Ler mais") },
-                                singleLine = true,
-                                isError = error?.contains("título", ignoreCase = true) == true,
-                                shape = RoundedCornerShape(16.dp)
-                            )
-                        }
-                        OutlinedTextField(
-                            value = description,
-                            onValueChange = { description = it },
-                            modifier = Modifier.fillMaxWidth(),
-                            label = { Text("Descrição (opcional)") },
-                            placeholder = { Text("O que essa meta significa para você?") },
-                            minLines = 2,
-                            maxLines = 3,
-                            shape = RoundedCornerShape(16.dp)
+                    Box(
+                        modifier = Modifier
+                            .size(40.dp)
+                            .clip(RoundedCornerShape(12.dp))
+                            .background(colors.primary.copy(alpha = 0.12f)),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.icone_meta),
+                            contentDescription = null,
+                            tint = colors.primary,
+                            modifier = Modifier.size(22.dp)
                         )
                     }
+                    Spacer(Modifier.width(12.dp))
+                    Text(
+                        text = if (existing == null) "Nova meta" else "Editar meta",
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = colors.onSurface,
+                        modifier = Modifier.weight(1f)
+                    )
+                    IconButton(onClick = onDismiss) {
+                        Icon(
+                            imageVector = Icons.Default.Close,
+                            contentDescription = "Fechar",
+                            tint = colors.onSurfaceVariant
+                        )
+                    }
+                }
+
+                HorizontalDivider(color = colors.outlineVariant.copy(alpha = 0.5f))
+
+                Column(
+                    modifier = Modifier
+                        .weight(1f, fill = false)
+                        .verticalScroll(rememberScrollState())
+                        .padding(horizontal = 20.dp, vertical = 16.dp),
+                    verticalArrangement = Arrangement.spacedBy(14.dp)
+                ) {
+                    OutlinedTextField(
+                        value = title,
+                        onValueChange = { title = it; error = null },
+                        modifier = Modifier.fillMaxWidth(),
+                        label = { Text("Título") },
+                        placeholder = { Text("Ex.: Ler 12 livros no ano") },
+                        singleLine = true,
+                        isError = error?.contains("título", ignoreCase = true) == true,
+                        shape = RoundedCornerShape(14.dp)
+                    )
+
+                    OutlinedTextField(
+                        value = description,
+                        onValueChange = { description = it },
+                        modifier = Modifier.fillMaxWidth(),
+                        label = { Text("Descrição (opcional)") },
+                        placeholder = { Text("Detalhes sobre sua meta") },
+                        minLines = 2,
+                        maxLines = 3,
+                        shape = RoundedCornerShape(14.dp)
+                    )
 
                     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                        SectionLabel("CATEGORIA")
-                        Row(Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        Text(
+                            text = "Categoria",
+                            style = MaterialTheme.typography.labelLarge,
+                            color = colors.onSurfaceVariant
+                        )
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .horizontalScroll(rememberScrollState()),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
                             categories.forEach { option ->
                                 FilterChip(
                                     selected = category == option,
                                     onClick = { category = option },
-                                    label = { Text(option) },
-                                    leadingIcon = if (category == option) ({ Icon(Icons.Default.Tune, contentDescription = null, modifier = Modifier.size(16.dp)) }) else null
+                                    label = { Text(option) }
                                 )
                             }
                         }
                     }
 
-                    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                        SectionLabel("ALVO")
-                        OutlinedTextField(
-                            value = target,
-                            onValueChange = { target = it.filter(Char::isDigit).take(6); error = null },
-                            modifier = Modifier.fillMaxWidth(),
-                            label = { Text("Quantidade ou etapas") },
-                            placeholder = { Text("Ex.: 12 livros ou 5 km") },
-                            leadingIcon = { Icon(Icons.Default.Flag, contentDescription = null) },
-                            supportingText = { Text("Use um número para acompanhar seu progresso.") },
-                            singleLine = true,
-                            isError = error?.contains("quantidade", ignoreCase = true) == true,
-                            shape = RoundedCornerShape(16.dp)
-                        )
-                    }
+                    OutlinedTextField(
+                        value = target,
+                        onValueChange = { target = it.filter(Char::isDigit).take(6); error = null },
+                        modifier = Modifier.fillMaxWidth(),
+                        label = { Text("Quantidade ou etapas") },
+                        placeholder = { Text("Ex.: 10") },
+                        leadingIcon = { Icon(Icons.Default.Flag, contentDescription = null) },
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                        singleLine = true,
+                        isError = error?.contains("quantidade", ignoreCase = true) == true,
+                        shape = RoundedCornerShape(14.dp)
+                    )
 
-                    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                        SectionLabel("PLANEJAMENTO · OPCIONAL")
-                        OutlinedTextField(
-                            value = dueDateField,
-                            onValueChange = { input ->
-                                val digits = input.text.filter(Char::isDigit).take(8)
-                                val selection = TextRange(
-                                    input.selection.start.coerceAtMost(digits.length),
-                                    input.selection.end.coerceAtMost(digits.length)
-                                )
-                                dueDateField = input.copy(text = digits, selection = selection)
-                                error = null
-                            },
-                            modifier = Modifier.fillMaxWidth(),
-                            label = { Text("Prazo") },
-                            placeholder = { Text("DD/MM/AAAA") },
-                            leadingIcon = { Icon(Icons.Default.Schedule, contentDescription = null) },
-                            supportingText = { Text("Digite os números. Ex.: 26082008 → 26/08/2008") },
-                            keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(keyboardType = KeyboardType.Number),
-                            visualTransformation = DateInputVisualTransformation(),
-                            singleLine = true,
-                            isError = error?.contains("data", ignoreCase = true) == true,
-                            shape = RoundedCornerShape(16.dp)
-                        )
-                        OutlinedTextField(
-                            value = frequency,
-                            onValueChange = { frequency = it },
-                            modifier = Modifier.fillMaxWidth(),
-                            label = { Text("Frequência") },
-                            placeholder = { Text("Ex.: 3 vezes por semana") },
-                            singleLine = true,
-                            shape = RoundedCornerShape(16.dp)
-                        )
+                    OutlinedTextField(
+                        value = dueDateField,
+                        onValueChange = { input ->
+                            val digits = input.text.filter(Char::isDigit).take(8)
+                            val selection = TextRange(
+                                input.selection.start.coerceAtMost(digits.length),
+                                input.selection.end.coerceAtMost(digits.length)
+                            )
+                            dueDateField = input.copy(text = digits, selection = selection)
+                            error = null
+                        },
+                        modifier = Modifier.fillMaxWidth(),
+                        label = { Text("Prazo (opcional)") },
+                        placeholder = { Text("DD/MM/AAAA") },
+                        leadingIcon = { Icon(Icons.Default.Schedule, contentDescription = null) },
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                        visualTransformation = DateInputVisualTransformation(),
+                        singleLine = true,
+                        isError = error?.contains("data", ignoreCase = true) == true,
+                        shape = RoundedCornerShape(14.dp)
+                    )
+
+                    OutlinedTextField(
+                        value = frequency,
+                        onValueChange = { frequency = it },
+                        modifier = Modifier.fillMaxWidth(),
+                        label = { Text("Frequência (opcional)") },
+                        placeholder = { Text("Ex.: 3 vezes por semana") },
+                        singleLine = true,
+                        shape = RoundedCornerShape(14.dp)
+                    )
+
+                    error?.let {
+                        Text(it, color = colors.error, style = MaterialTheme.typography.bodySmall)
                     }
-                    error?.let { Text(it, color = colors.error, style = MaterialTheme.typography.bodySmall) }
                 }
 
-                HorizontalDivider(color = colors.outlineVariant.copy(alpha = .6f))
+                HorizontalDivider(color = colors.outlineVariant.copy(alpha = 0.5f))
+
                 Row(
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 14.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 20.dp, vertical = 14.dp),
                     horizontalArrangement = Arrangement.spacedBy(10.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    TextButton(onClick = onDismiss, modifier = Modifier.weight(1f)) { Text("Cancelar") }
+                    OutlinedButton(
+                        onClick = onDismiss,
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(48.dp),
+                        shape = RoundedCornerShape(14.dp)
+                    ) {
+                        Text("Cancelar")
+                    }
                     Button(
                         onClick = {
                             val amount = target.toIntOrNull()
@@ -216,21 +240,37 @@ fun GoalDialog(
                             if (error == null) {
                                 val safeTarget = amount!!
                                 val current = (existing?.currentValue ?: 0).coerceIn(0, safeTarget)
-                                onSave(Goal(id = existing?.id ?: 0, emoji = emoji, title = title.trim(), description = description.trim(), currentValue = current, targetValue = safeTarget, progress = current.toFloat() / safeTarget, progressText = "$current de $safeTarget", category = category, dueDate = storedDate.orEmpty(), frequency = frequency.trim()))
+                                onSave(
+                                    Goal(
+                                        id = existing?.id ?: 0,
+                                        emoji = "",
+                                        title = title.trim(),
+                                        description = description.trim(),
+                                        currentValue = current,
+                                        targetValue = safeTarget,
+                                        progress = current.toFloat() / safeTarget,
+                                        progressText = "$current de $safeTarget",
+                                        category = category,
+                                        dueDate = storedDate.orEmpty(),
+                                        frequency = frequency.trim()
+                                    )
+                                )
                             }
                         },
-                        modifier = Modifier.weight(1.35f).height(52.dp),
-                        shape = RoundedCornerShape(16.dp)
-                    ) { Text(if (existing == null) "Criar meta" else "Salvar alterações", fontWeight = FontWeight.SemiBold) }
+                        modifier = Modifier
+                            .weight(1.3f)
+                            .height(48.dp),
+                        shape = RoundedCornerShape(14.dp)
+                    ) {
+                        Text(
+                            text = if (existing == null) "Criar meta" else "Salvar",
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    }
                 }
             }
         }
     }
-}
-
-@Composable
-private fun SectionLabel(label: String) {
-    Text(label, style = MaterialTheme.typography.labelMedium, fontWeight = FontWeight.Bold, letterSpacing = 1.sp, color = MaterialTheme.colorScheme.primary)
 }
 
 private fun formatDateInput(input: String): String {

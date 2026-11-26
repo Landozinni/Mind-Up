@@ -14,7 +14,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material.icons.filled.Spa
 import androidx.compose.material.icons.filled.Timer
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -26,10 +25,12 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.mindup.mindup.R
 import com.mindup.mindup.components.BottomBar
 import com.mindup.mindup.ui.theme.MindUpBackgroundBrush
 import kotlinx.coroutines.delay
@@ -137,7 +138,7 @@ fun PracticesScreen(
                                 Icon(Icons.Default.ArrowForward, contentDescription = null, tint = Color(0xFF27394C), modifier = Modifier.size(18.dp))
                             }
                         }
-                        Icon(Icons.Default.Spa, contentDescription = null, tint = Color(0xFF6657A8), modifier = Modifier.align(Alignment.CenterEnd).padding(end = 8.dp).size(58.dp))
+                        Icon(painter = painterResource(R.drawable.meditating), contentDescription = null, tint = Color(0xFF6657A8), modifier = Modifier.align(Alignment.CenterEnd).padding(end = 8.dp).size(58.dp))
                     }
                 }
 
@@ -189,7 +190,7 @@ private fun PracticeCard(practice: Practice, onClick: () -> Unit) {
                 Modifier.fillMaxWidth().height(118.dp).background(Brush.linearGradient(practice.colors)).padding(16.dp)
             ) {
                 Text(practice.category, modifier = Modifier.align(Alignment.TopStart).clip(CircleShape).background(Color.White.copy(alpha = .72f)).padding(horizontal = 10.dp, vertical = 5.dp), fontSize = 10.sp, fontWeight = FontWeight.Bold, letterSpacing = .8.sp, color = Color(0xFF39414C))
-                Icon(Icons.Default.Spa, contentDescription = null, tint = Color.White.copy(alpha = .85f), modifier = Modifier.align(Alignment.CenterEnd).padding(end = 8.dp).size(48.dp))
+                Icon(painter = painterResource(R.drawable.meditating), contentDescription = null, tint = Color.White.copy(alpha = .85f), modifier = Modifier.align(Alignment.CenterEnd).padding(end = 8.dp).size(48.dp))
                 Row(Modifier.align(Alignment.BottomStart), verticalAlignment = Alignment.CenterVertically) {
                     Icon(Icons.Default.Timer, contentDescription = null, tint = Color(0xFF39414C), modifier = Modifier.size(16.dp))
                     Spacer(Modifier.width(5.dp))
@@ -283,7 +284,7 @@ private fun PracticeDetail(practice: Practice, contentPadding: PaddingValues, on
             Text("←  Todas as práticas", color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.SemiBold)
         }
         Box(Modifier.fillMaxWidth().height(150.dp).clip(RoundedCornerShape(24.dp)).background(Brush.linearGradient(practice.colors)), contentAlignment = Alignment.Center) {
-            Icon(Icons.Default.Spa, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(66.dp))
+            Icon(painter = painterResource(R.drawable.meditating), contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(66.dp))
         }
         Spacer(Modifier.height(18.dp))
         Text(practice.category, style = MaterialTheme.typography.labelMedium, fontWeight = FontWeight.Bold, letterSpacing = 1.sp, color = MaterialTheme.colorScheme.primary)
